@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <defs><filter id="blur"><feGaussianBlur stdDeviation="6"/></filter></defs>
+  <path d="M0 420c65 60 92 190 145 580H0z" fill="#c795db" opacity=".20"/>
+  <path d="M1600 390c-75 75-90 225-155 610h155z" fill="#efc1dd" opacity=".24"/>
+  <g opacity=".36" filter="url(#blur)">
+    <circle cx="86" cy="780" r="44" fill="#f09ec9"/><circle cx="139" cy="818" r="60" fill="#c497dc"/><circle cx="1510" cy="785" r="56" fill="#d3a1e4"/><circle cx="1453" cy="836" r="45" fill="#f4b6d6"/>
+  </g>
+  <g fill="#b77acf" opacity=".45">
+    <path d="M270 180c-11-21-46-11-46 17 0 33 46 57 46 57s46-24 46-57c0-28-35-38-46-17z"/>
+    <path d="M1340 250c-8-15-33-8-33 12 0 24 33 41 33 41s33-17 33-41c0-20-25-27-33-12z"/>
+    <path d="M490 95c-6-12-26-6-26 10 0 18 26 32 26 32s26-14 26-32c0-16-20-22-26-10z"/>
+  </g>
+</svg>

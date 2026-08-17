@@ -1,0 +1,22 @@
+{
+  "name": "fendisha-21st-birthday-five-feature-review",
+  "private": true,
+  "version": "3.1.0",
+  "type": "module",
+  "description": "React + Tailwind birthday experience with automatic development rebuilds.",
+  "scripts": {
+    "start": "node scripts/dev.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs",
+    "sync:media": "node scripts/sync-media.mjs"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.10"
+  },
+  "dependencies": {
+    "htm": "^3.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

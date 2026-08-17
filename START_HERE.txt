@@ -1,0 +1,47 @@
+FENDISHA 21ST BIRTHDAY — START HERE
+====================================
+
+This ZIP already contains a built website in /dist.
+You do NOT need to install anything just to preview it.
+
+FASTEST PREVIEW
+1. Open PowerShell inside this folder.
+2. Run:
+      npm run start
+3. Open:
+      http://localhost:4173
+4. Password: 521152
+
+IMPORTANT BEFORE HER BIRTHDAY
+- Replace the placeholder photos in public/media/photos/ with your real images.
+- Put your real voice recordings ind public/media/voice/ using the exact filenames in docs/VOICE_GUIDE.md.
+- Then run:
+      npm run sync:media
+- Test once on your laptop and once on her Android-sized screen.
+- The final CALL DARION button needs your number in src/config.js, followed by a rebuild.
+
+FOR SOURCE/COPY CHANGES
+1. npm install
+2. Edit files in src/ or index.html.
+3. npm run build
+4. npm run start
+
+The deployed folder is /dist.
+
+Read docs/ASSET_GUIDE.md and docs/FINAL_CHECKLIST.md before sending the link.
+
+============================================================
+FIVE-FEATURE REVIEW BUILD
+============================================================
+This version adds ONLY the five locked upgrades:
+1) mysterious 3-step glass-heart/password entry
+2) birthday-room parallax + purple door
+3) 21 hidden little things
+4) choose-your-mood mini sequence
+5) Old Soul Mode
+
+For a clean review after you have opened it before:
+  http://localhost:4173/?reset=1
+
+Major scenes are now separated under src/pages/ for easy one-file copy/paste revisions.
+Read docs/REVIEW_THESE_5_FEATURES.md and docs/PAGE_MAP.md.

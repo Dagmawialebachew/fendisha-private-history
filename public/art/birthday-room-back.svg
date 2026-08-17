@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffafd"/>
+      <stop offset="0.52" stop-color="#f7efff"/>
+      <stop offset="1" stop-color="#eadcf7"/>
+    </linearGradient>
+    <radialGradient id="light" cx="50%" cy="22%" r="70%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset=".35" stop-color="#f9dff0" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#c99be2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="door" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6b397d"/>
+      <stop offset=".5" stop-color="#8e59a8"/>
+      <stop offset="1" stop-color="#4d275e"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".85"/>
+      <stop offset=".5" stop-color="#e8c9f7" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#f6c8dd" stop-opacity=".55"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#6b397d" flood-opacity=".18"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#wall)"/>
+  <rect width="1600" height="1000" fill="url(#light)"/>
+  <ellipse cx="800" cy="820" rx="720" ry="190" fill="#b88ad3" opacity=".09" filter="url(#soft)"/>
+  <path d="M0 770H1600V1000H0z" fill="#fbf6fd"/>
+  <path d="M0 770H1600" stroke="#d8bde8" stroke-width="4" opacity=".45"/>
+  <path d="M120 115H1480" stroke="#d9c2e7" stroke-width="3" opacity=".5"/>
+  <path d="M90 145H1510" stroke="#fff" stroke-width="2" opacity=".8"/>
+  <g opacity=".35" stroke="#b98bcf" fill="none">
+    <rect x="90" y="190" width="355" height="505" rx="10"/>
+    <rect x="1155" y="190" width="355" height="505" rx="10"/>
+    <rect x="480" y="185" width="640" height="510" rx="12"/>
+  </g>
+  <!-- center arched door -->
+  <g>
+    <path d="M635 710V390c0-127 73-220 165-220s165 93 165 220v320z" fill="#fdf9ff" stroke="#d7b7e6" stroke-width="9"/>
+    <path d="M667 710V399c0-108 58-185 133-185s133 77 133 185v311z" fill="url(#door)"/>
+    <path d="M800 217V710" stroke="#d9b5e7" stroke-width="4" opacity=".5"/>
+    <path d="M696 420H904M696 545H904" stroke="#f6e8ff" stroke-width="3" opacity=".36"/>
+    <circle cx="788" cy="565" r="9" fill="#f8d792"/><circle cx="812" cy="565" r="9" fill="#f8d792"/>
+    <path d="M709 350c38-50 75-74 91-74 16 0 53 24 91 74" stroke="#f4deff" stroke-width="5" fill="none" opacity=".28"/>
+  </g>
+  <!-- tall windows -->
+  <g opacity=".9">
+    <rect x="170" y="240" width="215" height="400" rx="110" fill="url(#glass)" stroke="#fff" stroke-width="7"/>
+    <rect x="1215" y="240" width="215" height="400" rx="110" fill="url(#glass)" stroke="#fff" stroke-width="7"/>
+    <path d="M277 247V634M1322 247V634" stroke="#fff" stroke-width="3" opacity=".55"/>
+    <path d="M177 445H379M1222 445H1423" stroke="#fff" stroke-width="3" opacity=".55"/>
+  </g>
+  <!-- curtains -->
+  <g opacity=".8">
+    <path d="M95 150c48 100 30 264 70 520 27 52 75 83 128 98-57-244-7-459-40-618z" fill="#d8a9dc" opacity=".36"/>
+    <path d="M430 148c-48 120-23 300-76 525-18 45-53 74-100 97 50-246 12-463 43-620z" fill="#f3cce0" opacity=".45"/>
+    <path d="M1170 150c50 118 28 293 72 520 21 46 62 76 110 98-54-245-9-460-42-618z" fill="#f0c3df" opacity=".42"/>
+    <path d="M1510 147c-47 119-20 295-77 526-19 44-55 73-103 96 52-244 10-463 41-620z" fill="#cfa1dc" opacity=".38"/>
+  </g>
+  <!-- chandelier -->
+  <g transform="translate(800 46)" stroke="#9b6bb6" stroke-width="4" fill="none" opacity=".7">
+    <path d="M0 0v72"/>
+    <path d="M-105 105c30-42 62-45 105-6 44-39 76-36 105 6"/>
+    <path d="M-105 105l-30 48M105 105l30 48M0 99v65"/>
+    <circle cx="-135" cy="153" r="12" fill="#fff4d7" stroke="none"/><circle cx="135" cy="153" r="12" fill="#fff4d7" stroke="none"/><circle cx="0" cy="164" r="14" fill="#fff4d7" stroke="none"/>
+    <path d="M-80 112l-12 46M80 112l12 46"/>
+    <circle cx="-92" cy="158" r="8" fill="#f3dfff" stroke="none"/><circle cx="92" cy="158" r="8" fill="#f3dfff" stroke="none"/>
+  </g>
+  <!-- floor rug -->
+  <ellipse cx="800" cy="852" rx="405" ry="105" fill="#fff" opacity=".75"/>
+  <ellipse cx="800" cy="852" rx="370" ry="86" fill="#d8b1e6" opacity=".18"/>
+  <ellipse cx="800" cy="852" rx="300" ry="62" fill="none" stroke="#b983ce" stroke-width="2" opacity=".28"/>
+</svg>

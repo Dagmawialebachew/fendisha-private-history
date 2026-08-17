@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff8fc"/><stop offset="1" stop-color="#f1e7ff"/></linearGradient>
+    <filter id="s"><feDropShadow dx="0" dy="20" stdDeviation="22" flood-color="#8e5eae" flood-opacity=".15"/></filter>
+  </defs>
+  <rect width="1200" height="760" rx="48" fill="url(#bg)"/>
+  <g opacity=".18" fill="#c891ea"><circle cx="1030" cy="140" r="160"/><circle cx="120" cy="630" r="140"/></g>
+  <g filter="url(#s)" transform="translate(250 160)">
+    <ellipse cx="350" cy="310" rx="250" ry="64" fill="#fff" stroke="#8a5aad" stroke-width="9"/>
+    <path d="M350 374v170" stroke="#8a5aad" stroke-width="14" stroke-linecap="round"/>
+    <path d="M235 540h230" stroke="#8a5aad" stroke-width="14" stroke-linecap="round"/>
+    <g fill="#f7effd" stroke="#b77bdd" stroke-width="8">
+      <path d="M60 280h140v210H60z" rx="24"/><path d="M500 280h140v210H500z" rx="24"/>
+    </g>
+    <g fill="#f5bddb" opacity=".75"><circle cx="130" cy="185" r="24"/><circle cx="570" cy="185" r="24"/></g>
+    <path d="M130 214v63m440-63v63" stroke="#8a5aad" stroke-width="10" stroke-linecap="round"/>
+    <path d="M302 260c16-22 48-4 48 20 0-24 32-42 48-20 25 34-48 83-48 83s-73-49-48-83z" fill="#d98ab8" opacity=".55"/>
+  </g>
+  <text x="600" y="88" text-anchor="middle" fill="#56336f" font-family="Georgia,serif" font-size="34" font-style="italic">Frfr Tera, remembered softly</text>
+  <text x="600" y="720" text-anchor="middle" fill="#805b95" font-family="Arial,sans-serif" font-size="22">reimagined illustration · replace with a real photo only if you ever find one</text>
+</svg>
