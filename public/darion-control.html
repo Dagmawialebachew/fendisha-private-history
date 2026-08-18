@@ -76,6 +76,11 @@
     let adminKey = sessionStorage.getItem('darion-ai-admin-key') || '';
     let pollTimer = null;
     let connected = false;
+    let refreshInFlight = false;
+    let suspendPolling = false;
+    let currentMessages = [];
+    const drafts = new Map();
+    const sendingIds = new Set();
 
     if (adminKey) keyInput.value = adminKey;
 
@@ -97,6 +102,7 @@
     async function call(body) {
       const response = await fetch('/api/darion-ai', {
         method:'POST',
+        cache:'no-store',
         headers:{
           'Content-Type':'application/json',
           'x-darion-key':adminKey
@@ -105,20 +111,41 @@
       });
 
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || 'request failed');
+      if (!response.ok) throw new Error(data.error || `request failed (${response.status})`);
       return data;
     }
 
+    function captureDrafts() {
+      listEl.querySelectorAll('[data-answer]').forEach(textarea => {
+        drafts.set(textarea.dataset.answer, textarea.value);
+      });
+    }
+
+    function restoreDrafts() {
+      listEl.querySelectorAll('[data-answer]').forEach(textarea => {
+        const id = textarea.dataset.answer;
+        if (drafts.has(id)) textarea.value = drafts.get(id);
+      });
+    }
+
     function render(messages) {
-      if (!messages.length) {
+      captureDrafts();
+      currentMessages = Array.isArray(messages) ? messages : [];
+
+      if (!currentMessages.length) {
         listEl.innerHTML = '<div class="empty">no questions yet. suspiciously peaceful 😭</div>';
         return;
       }
 
-      listEl.innerHTML = messages.map(item => {
+      const activeId = document.activeElement?.dataset?.answer || '';
+      const selectionStart = activeId ? document.activeElement.selectionStart : null;
+      const selectionEnd = activeId ? document.activeElement.selectionEnd : null;
+
+      listEl.innerHTML = currentMessages.map(item => {
         const waiting = item.status === 'waiting';
+        const isSending = sendingIds.has(item.id);
         const quick = waiting
-          ? `<div class="quick">${quickReplies.map((text,index) => `<button type="button" data-quick="${index}" data-id="${esc(item.id)}">${esc(text)}</button>`).join('')}</div>`
+          ? `<div class="quick">${quickReplies.map((text,index) => `<button type="button" data-quick="${index}" data-id="${esc(item.id)}" ${isSending ? 'disabled' : ''}>${esc(text)}</button>`).join('')}</div>`
           : '';
 
         const answer = !waiting && item.answer
@@ -128,17 +155,30 @@
         return `
           <article class="card ${waiting ? 'waiting' : ''}" data-card="${esc(item.id)}">
             <div class="top">
-              <span class="badge">${waiting ? '<span class="dot"></span>waiting' : 'answered'}</span>
+              <span class="badge">${waiting ? '<span class="dot"></span>waiting' : 'answered ✓'}</span>
               <p class="question">“${esc(item.question)}”</p>
             </div>
             <div class="meta">${esc(item.scene_id)} · ${formatTime(item.created_at)}</div>
-            ${waiting ? `<textarea data-answer="${esc(item.id)}" placeholder="type what Darion AI should say..."></textarea>${quick}<div class="actions"><button class="primary" data-send="${esc(item.id)}">send as Darion AI →</button></div>` : answer}
+            ${waiting ? `<textarea data-answer="${esc(item.id)}" placeholder="type what Darion AI should say..." ${isSending ? 'disabled' : ''}></textarea>${quick}<div class="actions"><button class="primary" data-send="${esc(item.id)}" ${isSending ? 'disabled' : ''}>${isSending ? 'sending…' : 'send as Darion AI →'}</button></div>` : answer}
           </article>`;
       }).join('');
+
+      restoreDrafts();
+
+      if (activeId) {
+        const next = listEl.querySelector(`[data-answer="${CSS.escape(activeId)}"]`);
+        if (next && !next.disabled) {
+          next.focus({preventScroll:true});
+          if (selectionStart !== null && selectionEnd !== null) {
+            try { next.setSelectionRange(selectionStart, selectionEnd); } catch {}
+          }
+        }
+      }
     }
 
-    async function refresh() {
-      if (!adminKey) return;
+    async function refresh({force = false} = {}) {
+      if (!adminKey || refreshInFlight || (suspendPolling && !force)) return;
+      refreshInFlight = true;
 
       try {
         const data = await call({action:'admin-list'});
@@ -149,21 +189,33 @@
         connected = false;
         statusEl.textContent = error.message === 'Unauthorized.'
           ? 'wrong admin key.'
-          : 'control room could not reach the server.';
+          : `control room could not reach the server · ${error.message}`;
+      } finally {
+        refreshInFlight = false;
       }
+    }
+
+    function startPolling() {
+      clearInterval(pollTimer);
+      pollTimer = setInterval(() => refresh(), 2500);
     }
 
     connectBtn.addEventListener('click', async () => {
       adminKey = keyInput.value.trim();
       if (!adminKey) return;
       sessionStorage.setItem('darion-ai-admin-key', adminKey);
-      await refresh();
-      clearInterval(pollTimer);
-      pollTimer = setInterval(refresh, 1500);
+      await refresh({force:true});
+      startPolling();
     });
 
     keyInput.addEventListener('keydown', event => {
       if (event.key === 'Enter') connectBtn.click();
+    });
+
+    listEl.addEventListener('input', event => {
+      const textarea = event.target.closest('[data-answer]');
+      if (!textarea) return;
+      drafts.set(textarea.dataset.answer, textarea.value);
     });
 
     listEl.addEventListener('click', async event => {
@@ -171,7 +223,11 @@
       if (quick) {
         const id = quick.dataset.id;
         const textarea = listEl.querySelector(`[data-answer="${CSS.escape(id)}"]`);
-        if (textarea) textarea.value = quickReplies[Number(quick.dataset.quick)] || '';
+        if (textarea) {
+          textarea.value = quickReplies[Number(quick.dataset.quick)] || '';
+          drafts.set(id, textarea.value);
+          textarea.focus();
+        }
         return;
       }
 
@@ -180,19 +236,40 @@
 
       const id = send.dataset.send;
       const textarea = listEl.querySelector(`[data-answer="${CSS.escape(id)}"]`);
-      const answer = textarea?.value?.trim();
-      if (!answer) return;
+      const answer = (textarea?.value || drafts.get(id) || '').trim();
+      if (!answer || sendingIds.has(id)) return;
 
-      send.disabled = true;
-      send.textContent = 'sending…';
+      sendingIds.add(id);
+      suspendPolling = true;
+      drafts.set(id, answer);
+      render(currentMessages);
+      statusEl.textContent = 'sending your reply to Fendisha…';
 
       try {
-        await call({action:'admin-reply', id, answer});
-        await refresh();
+        const data = await call({action:'admin-reply', id, answer});
+
+        drafts.delete(id);
+
+        const returned = data.message;
+        if (returned?.id) {
+          currentMessages = currentMessages.map(item =>
+            item.id === returned.id ? {...item, ...returned} : item
+          );
+          render(currentMessages);
+        }
+
+        statusEl.innerHTML = '<span class="dot"></span>sent ✓ · her chat will pick it up automatically';
+
+        // One authoritative refresh after the successful UPDATE.
+        await new Promise(resolve => setTimeout(resolve, 250));
+        await refresh({force:true});
       } catch (error) {
-        send.disabled = false;
-        send.textContent = 'send as Darion AI →';
-        alert(error.message);
+        statusEl.textContent = `NOT SENT · ${error.message}`;
+        alert(`Reply was NOT sent:\n\n${error.message}`);
+      } finally {
+        sendingIds.delete(id);
+        suspendPolling = false;
+        render(currentMessages);
       }
     });
 
