@@ -1137,15 +1137,24 @@ closeSecretCrushReveal =
 
       </div>
 
-      <${DarionAI}
-  sceneId=${
-    this.state.unlocked
-      ? EXPERIENCE_SCENES[
-          this.state.sceneIndex
-        ]?.id || 'experience'
-      : 'entry-gate'
-  }
-/>
+      ${
+  !this.state.unlocked ||
+  EXPERIENCE_SCENES[
+    this.state.sceneIndex
+  ]?.id !== 'birthday-room'
+    ? html`
+        <${DarionAI}
+          sceneId=${
+            this.state.unlocked
+              ? EXPERIENCE_SCENES[
+                  this.state.sceneIndex
+                ]?.id || 'experience'
+              : 'entry-gate'
+          }
+        />
+      `
+    : null
+}
 
       <${TrackingBridge}
   unlocked=${this.state.unlocked}

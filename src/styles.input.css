@@ -828,7 +828,7 @@ strong { color: #5c2e78; }
 .old-soul-toggle {
   position: fixed;
   left: max(.8rem, env(safe-area-inset-left));
-  bottom: max(.8rem, env(safe-area-inset-bottom));
+  bottom: 4rem;
   z-index: 82;
   display: flex;
   align-items: center;
