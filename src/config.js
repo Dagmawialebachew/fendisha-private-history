@@ -4,7 +4,7 @@ export const config = {
   age: 21,
   passcode: '521152',
   passcodeClue: 'The day that changed what “us” meant. The broken glass reads it from the other side.',
-  phone: '',
+  phone: '+251960306801',
   preview: new URLSearchParams(location.search).has('preview'),
 };
 

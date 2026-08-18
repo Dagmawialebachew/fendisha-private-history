@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Darion Control Room</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --plum:#4a275f;
+      --berry:#8f4fb3;
+      --paper:#fffafd;
+      --line:#eadcf2;
+      --muted:#836c91;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#f5dcf0 0,transparent 30%),radial-gradient(circle at 90% 20%,#e8ddfb 0,transparent 31%),linear-gradient(180deg,#fffafd,#f7effb);color:var(--plum);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,textarea{font:inherit}
+    .shell{width:min(980px,calc(100% - 28px));margin:0 auto;padding:34px 0 70px}
+    .eyebrow{font-size:10px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:#a46fc0}
+    h1{margin:8px 0 6px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(42px,7vw,74px);font-style:italic;font-weight:600;letter-spacing:-.045em;line-height:.9}
+    .sub{max-width:650px;color:#765d84;font-size:14px;line-height:1.7}
+    .auth,.card{border:1px solid rgba(255,255,255,.95);background:rgba(255,250,253,.86);box-shadow:0 24px 80px rgba(74,39,95,.13);backdrop-filter:blur(18px)}
+    .auth{margin-top:26px;display:flex;gap:10px;padding:12px;border-radius:22px}
+    .auth input{min-width:0;flex:1;border:1px solid var(--line);border-radius:15px;background:white;padding:12px 14px;outline:none;color:var(--plum)}
+    .primary{border:0;border-radius:15px;background:linear-gradient(135deg,#7650a9,#d4549e);padding:12px 16px;color:white;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(113,69,159,.22)}
+    .primary:disabled{opacity:.45;cursor:not-allowed}
+    .status{margin:18px 2px 0;font-size:12px;color:var(--muted)}
+    .grid{display:grid;gap:14px;margin-top:18px}
+    .card{border-radius:26px;padding:18px}
+    .card.waiting{box-shadow:0 26px 90px rgba(144,68,153,.18);border-color:#f0d6ea}
+    .top{display:flex;gap:12px;align-items:flex-start}
+    .badge{flex:none;border-radius:999px;background:#f3e8f8;color:#8f4fb3;padding:6px 9px;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .question{margin:0;flex:1;font-family:Georgia,"Times New Roman",serif;font-size:22px;font-style:italic;line-height:1.25}
+    .meta{margin-top:9px;font-size:10px;color:#927c9f}
+    textarea{width:100%;min-height:96px;margin-top:15px;resize:vertical;border:1px solid var(--line);border-radius:18px;background:white;padding:13px 14px;outline:none;color:var(--plum);line-height:1.55}
+    textarea:focus,input:focus{border-color:#cfaddd;box-shadow:0 0 0 4px rgba(183,128,220,.10)}
+    .quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+    .quick button{border:1px solid var(--line);border-radius:999px;background:#fff;padding:7px 10px;color:#775285;font-size:10px;font-weight:700;cursor:pointer}
+    .actions{display:flex;justify-content:flex-end;margin-top:10px}
+    .answer{margin-top:12px;border-radius:18px;background:#f8f1fb;padding:13px 14px;color:#6d507a;font-size:13px;line-height:1.6}
+    .empty{border:1px dashed #decce7;border-radius:26px;padding:32px;text-align:center;color:#997ca8;background:rgba(255,255,255,.46)}
+    .dot{display:inline-block;width:7px;height:7px;border-radius:999px;background:#d4549e;margin-right:6px;box-shadow:0 0 0 4px rgba(212,84,158,.10)}
+    @media(max-width:620px){.shell{padding-top:24px}.auth{flex-direction:column}.question{font-size:19px}.card{padding:15px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <p class="eyebrow">PRIVATE · DARION ONLY</p>
+    <h1>control room.</h1>
+    <p class="sub">She sees “Darion AI.” You see the real question here, answer it, and her little drawer updates automatically. No refresh on her side.</p>
+
+    <div class="auth">
+      <input id="key" type="password" autocomplete="current-password" placeholder="DARION_AI_ADMIN_KEY" />
+      <button class="primary" id="connect">connect</button>
+    </div>
+
+    <p class="status" id="status">not connected yet.</p>
+    <section class="grid" id="list"></section>
+  </main>
+
+  <script>
+    const keyInput = document.getElementById('key');
+    const connectBtn = document.getElementById('connect');
+    const statusEl = document.getElementById('status');
+    const listEl = document.getElementById('list');
+
+    const quickReplies = [
+      'nice try 😭 that one is meant for Darion to answer himself.',
+      'keep going... u are asking me this suspiciously early 👀',
+      'yes 😭 unfortunately I know that one.',
+      'I could answer that... but ruining the next page would get me fired 💜'
+    ];
+
+    let adminKey = sessionStorage.getItem('darion-ai-admin-key') || '';
+    let pollTimer = null;
+    let connected = false;
+
+    if (adminKey) keyInput.value = adminKey;
+
+    function esc(value) {
+      return String(value ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    function formatTime(value) {
+      try {
+        return new Date(value).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      } catch { return ''; }
+    }
+
+    async function call(body) {
+      const response = await fetch('/api/darion-ai', {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-darion-key':adminKey
+        },
+        body:JSON.stringify(body)
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'request failed');
+      return data;
+    }
+
+    function render(messages) {
+      if (!messages.length) {
+        listEl.innerHTML = '<div class="empty">no questions yet. suspiciously peaceful 😭</div>';
+        return;
+      }
+
+      listEl.innerHTML = messages.map(item => {
+        const waiting = item.status === 'waiting';
+        const quick = waiting
+          ? `<div class="quick">${quickReplies.map((text,index) => `<button type="button" data-quick="${index}" data-id="${esc(item.id)}">${esc(text)}</button>`).join('')}</div>`
+          : '';
+
+        const answer = !waiting && item.answer
+          ? `<div class="answer"><strong>Darion AI said:</strong><br>${esc(item.answer)}</div>`
+          : '';
+
+        return `
+          <article class="card ${waiting ? 'waiting' : ''}" data-card="${esc(item.id)}">
+            <div class="top">
+              <span class="badge">${waiting ? '<span class="dot"></span>waiting' : 'answered'}</span>
+              <p class="question">“${esc(item.question)}”</p>
+            </div>
+            <div class="meta">${esc(item.scene_id)} · ${formatTime(item.created_at)}</div>
+            ${waiting ? `<textarea data-answer="${esc(item.id)}" placeholder="type what Darion AI should say..."></textarea>${quick}<div class="actions"><button class="primary" data-send="${esc(item.id)}">send as Darion AI →</button></div>` : answer}
+          </article>`;
+      }).join('');
+    }
+
+    async function refresh() {
+      if (!adminKey) return;
+
+      try {
+        const data = await call({action:'admin-list'});
+        connected = true;
+        statusEl.innerHTML = '<span class="dot"></span>live · waiting for Fendisha';
+        render(Array.isArray(data.messages) ? data.messages : []);
+      } catch (error) {
+        connected = false;
+        statusEl.textContent = error.message === 'Unauthorized.'
+          ? 'wrong admin key.'
+          : 'control room could not reach the server.';
+      }
+    }
+
+    connectBtn.addEventListener('click', async () => {
+      adminKey = keyInput.value.trim();
+      if (!adminKey) return;
+      sessionStorage.setItem('darion-ai-admin-key', adminKey);
+      await refresh();
+      clearInterval(pollTimer);
+      pollTimer = setInterval(refresh, 1500);
+    });
+
+    keyInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') connectBtn.click();
+    });
+
+    listEl.addEventListener('click', async event => {
+      const quick = event.target.closest('[data-quick]');
+      if (quick) {
+        const id = quick.dataset.id;
+        const textarea = listEl.querySelector(`[data-answer="${CSS.escape(id)}"]`);
+        if (textarea) textarea.value = quickReplies[Number(quick.dataset.quick)] || '';
+        return;
+      }
+
+      const send = event.target.closest('[data-send]');
+      if (!send) return;
+
+      const id = send.dataset.send;
+      const textarea = listEl.querySelector(`[data-answer="${CSS.escape(id)}"]`);
+      const answer = textarea?.value?.trim();
+      if (!answer) return;
+
+      send.disabled = true;
+      send.textContent = 'sending…';
+
+      try {
+        await call({action:'admin-reply', id, answer});
+        await refresh();
+      } catch (error) {
+        send.disabled = false;
+        send.textContent = 'send as Darion AI →';
+        alert(error.message);
+      }
+    });
+
+    if (adminKey) connectBtn.click();
+  </script>
+</body>
+</html>

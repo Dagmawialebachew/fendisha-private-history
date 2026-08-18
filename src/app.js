@@ -4,6 +4,13 @@ import {
   html,
 } from './lib/react.js';
 
+
+import {
+  DarionAI,
+} from './components/DarionAI.js';
+
+
+
 import {
   config,
 } from './config.js';
@@ -1129,6 +1136,16 @@ closeSecretCrushReveal =
         />
 
       </div>
+
+      <${DarionAI}
+  sceneId=${
+    this.state.unlocked
+      ? EXPERIENCE_SCENES[
+          this.state.sceneIndex
+        ]?.id || 'experience'
+      : 'entry-gate'
+  }
+/>
 
       <${TrackingBridge}
   unlocked=${this.state.unlocked}
