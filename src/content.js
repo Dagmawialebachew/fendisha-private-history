@@ -35,7 +35,7 @@ export const usMoments = [
   {
     year: 'The tiny café',
     title: 'Frfr Tera',
-    body: 'A friend introduced us at a small café. Nothing needed to look cinematic. You were there, I was there, and somehow that ordinary place became page one.',
+    body: 'Moh introduced us at a small café. Nothing needed to look cinematic. You were there, I was there, and somehow that ordinary place became page one.',
     art: 'frfr',
   },
   {

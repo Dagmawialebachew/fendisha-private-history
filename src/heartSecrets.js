@@ -26,7 +26,7 @@ export const heartSecrets = [
       'Some of these tiny hearts are hiding little things from me. If u see another one anywhere in here... touch it.',
 
     footer:
-      "I'm not telling u where they are though 💜. But it is better to look for after finishing the page content fully",
+      "I'm not telling u where they are though 💜. But it is better to look for after finishing the page content fully. Trust me the 19th contain sth that make you go crazy.",
   },
 
 
@@ -103,7 +103,7 @@ export const heartSecrets = [
       'note',
 
     message:
-      'Frfr Tera Café somehow became important.',
+      'Frfr Tera somehow became important.',
 
     sub:
       'one introduction... and somehow all this 😂',
@@ -323,7 +323,7 @@ export const heartSecrets = [
       'note',
 
     message:
-      'I would probably be slow in 1925 too 😭',
+      'I would probably be slow in 1962 too 😭',
 
     sub:
       'somebody would still have to introduce us.',
@@ -386,7 +386,7 @@ export const heartSecrets = [
       'there is something u probably thought I never knew.',
 
     intro:
-      'A long time ago... one of my friends posted me on his story for my birthday.',
+      'A long time ago... one of my friends(Moh) posted me on his story for my birthday.',
 
     setup:
       'And apparently one particular girl replied with a very interesting question 😭',

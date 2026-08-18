@@ -9,6 +9,11 @@ import {
 } from './config.js';
 
 import {
+  TrackingBridge,
+} from './components/TrackingBridge.js';
+
+
+import {
   PreBirthdayGate,
 } from './components/PreBirthdayGate.js';
 
@@ -1124,6 +1129,22 @@ closeSecretCrushReveal =
         />
 
       </div>
+
+      <${TrackingBridge}
+  unlocked=${this.state.unlocked}
+  sceneIndex=${this.state.sceneIndex}
+  sceneId=${
+    EXPERIENCE_SCENES[
+      this.state.sceneIndex
+    ]?.id || ''
+  }
+  found=${this.state.found}
+  mood=${this.state.mood}
+  oldSoul=${this.state.oldSoul}
+  secretCrushOpen=${
+    this.state.secretCrushOpen
+  }
+/>
     `;
   }
 }

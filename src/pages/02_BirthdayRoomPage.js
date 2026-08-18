@@ -1,5 +1,5 @@
-import { React, html } from '../lib/react.js';
-import { playAudio, playSfx } from '../lib/audio.js';
+import { React, html } from "../lib/react.js";
+import { playAudio, playSfx } from "../lib/audio.js";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -13,7 +13,7 @@ const SCENE_WIDTH = 1672;
 const SCENE_HEIGHT = 941;
 
 const ZOOM_STEP = 0.055;
-const MAX_MANUAL_ZOOM = 0.20;
+const MAX_MANUAL_ZOOM = 0.2;
 const MIN_MANUAL_ZOOM = -0.07;
 
 const CAMERA_DURATION_MIN = 900;
@@ -22,197 +22,184 @@ const ZOOM_DURATION = 460;
 
 const VIEWS = [
   {
-    id: 'room',
+    id: "room",
     x: 50,
     y: 50,
     scale: 1,
-    label: 'whole room',
-    kicker: 'A TINY PREVIEW OF SOMEDAY',
-    title: 'I built u a little piece of a future dream.',
-    body:
-      'Not the real one yet 😭... just one room made from little things that somehow feel like u.',
-    description: 'top-left',
-    controls: 'bottom',
+    label: "whole room",
+    kicker: "A TINY PREVIEW OF SOMEDAY",
+    title: "I built u a little piece of a future dream.",
+    body: "Not the real one yet 😭... just one room made from little things that somehow feel like u.",
+    description: "top-left",
+    controls: "bottom",
     arrow: false,
   },
   {
-    id: 'car',
+    id: "car",
     x: 77,
     y: 12,
     scale: 1.18,
-    label: 'Formula 1',
-    kicker: 'OF COURSE THIS MADE IT IN',
-    title: '63 had to get a proper shelf.',
-    body:
-      'I know how much F1 makes u light up, so obviously it deserved its own little corner 😂',
-    description: 'bottom-left',
-    controls: 'bottom',
+    label: "Formula 1",
+    kicker: "OF COURSE THIS MADE IT IN",
+    title: "63 had to get a proper shelf.",
+    body: "I know how much F1 makes u light up, so obviously it deserved its own little corner 😂",
+    description: "bottom-left",
+    controls: "bottom",
   },
   {
-    id: 'hat',
+    id: "hat",
     x: 73.5,
     y: 21.5,
     scale: 1.19,
-    label: '#63',
-    kicker: 'ONE VERY SPECIFIC NUMBER',
-    title: 'and yeah... the 63 stays.',
-    body:
-      'A tiny George Russell detail because apparently I actually remember the suspiciously specific things u love.',
-    description: 'bottom-left',
-    controls: 'bottom',
+    label: "#63",
+    kicker: "ONE VERY SPECIFIC NUMBER",
+    title: "and yeah... the 63 stays.",
+    body: "A tiny George Russell detail because apparently I actually remember the suspiciously specific things u love.",
+    description: "bottom-left",
+    controls: "bottom",
   },
   {
-    id: 'lana',
+    id: "lana",
     x: 80.5,
     y: 41.5,
     scale: 1.17,
-    label: 'Lana mood',
-    kicker: 'MORE OF A FEELING THAN AN OBJECT',
-    title: 'some parts of u feel like a whole soundtrack.',
-    body:
-      'Soft, dramatic, feminine, old-soul... I wanted one little corner to carry that Lana kind of atmosphere.',
-    description: 'top-left',
-    controls: 'bottom',
+    label: "Lana mood",
+    kicker: "MORE OF A FEELING THAN AN OBJECT",
+    title: "some parts of u feel like a whole soundtrack.",
+    body: "Soft, dramatic, feminine, old-soul... I wanted one little corner to carry that Lana kind of atmosphere.",
+    description: "top-left",
+    controls: "bottom",
   },
   {
-    id: 'record',
+    id: "record",
     x: 76,
     y: 88,
     scale: 1.18,
-    label: 'record player',
-    kicker: 'THE ROOM NEEDED A SOUND',
-    title: 'something here had to feel nostalgic.',
-    body:
-      'Because a room that reminds me of u should have music somewhere in it too... soft, warm and playing in the background.',
-    description: 'top-left',
-    controls: 'top',
+    label: "record player",
+    kicker: "THE ROOM NEEDED A SOUND",
+    title: "something here had to feel nostalgic.",
+    body: "Because a room that reminds me of u should have music somewhere in it too... soft, warm and playing in the background.",
+    description: "top-left",
+    controls: "top",
   },
   {
-    id: 'mirror',
+    id: "mirror",
     x: 92,
     y: 28,
     scale: 1.16,
-    label: 'mirror',
-    kicker: 'VERY OBVIOUS REASON',
-    title: 'this was meant to hold the prettiest thing here.',
-    body:
-      'I could decorate every corner perfectly and the mirror would still win the second u stand in front of it.',
-    description: 'bottom-left',
-    controls: 'bottom',
+    label: "mirror",
+    kicker: "VERY OBVIOUS REASON",
+    title: "this was meant to hold the prettiest thing here.",
+    body: "I could decorate every corner perfectly and the mirror would still win the second u stand in front of it.",
+    description: "bottom-left",
+    controls: "bottom",
   },
   {
-    id: 'key',
+    id: "key",
     x: 19,
     y: 88,
     scale: 1.18,
-    label: 'MERCEDES key + glass',
-    kicker: 'A SMALL FUTURE DETAIL',
-    title: 'I let one little future flex sneak in.',
-    body:
-      'Not some dramatic promise... just me imagining u grown, doing well, enjoying life and having nice things that are completely yours.',
-    description: 'top-right',
-    controls: 'top',
+    label: "MERCEDES key + glass",
+    kicker: "A SMALL FUTURE DETAIL",
+    title: "I let one little future flex sneak in.",
+    body: "Not some dramatic promise... just me imagining u grown, doing well, enjoying life and having nice things that are completely yours.",
+    description: "top-right",
+    controls: "top",
   },
   {
-    id: 'clothes',
+    id: "clothes",
     x: 58,
     y: 66,
     scale: 1.15,
-    label: 'your style',
-    kicker: 'BECAUSE U WOULD ACTUALLY LIVE HERE',
-    title: 'the room needed your clothes too.',
-    body:
-      'Soft purple, something relaxed, something feminine... otherwise this would just be a pretty showroom instead of your room.',
-    description: 'top-left',
-    controls: 'bottom',
+    label: "your style",
+    kicker: "BECAUSE U WOULD ACTUALLY LIVE HERE",
+    title: "the room needed your clothes too.",
+    body: "Soft purple, something relaxed, something feminine... otherwise this would just be a pretty showroom instead of your room.",
+    description: "top-left",
+    controls: "bottom",
   },
   {
-    id: 'begena',
+    id: "begena",
     x: 18,
     y: 50,
     scale: 1.18,
-    label: 'Begena',
-    kicker: 'THIS ONE WAS NON-NEGOTIABLE',
-    title: 'some things about u feel timeless.',
-    body:
-      'The Begena belongs here because it carries that quiet, rooted, old-soul side of u that a normal pretty bedroom could never explain.',
-    description: 'top-right',
-    controls: 'bottom',
+    label: "Begena",
+    kicker: "THIS ONE WAS NON-NEGOTIABLE",
+    title: "some things about u feel timeless.",
+    body: "The Begena belongs here because it carries that quiet, rooted, old-soul side of u that a normal pretty bedroom could never explain.",
+    description: "top-right",
+    controls: "bottom",
   },
   {
-    id: 'roses',
+    id: "roses",
     x: 7.5,
     y: 45,
     scale: 1.17,
-    label: 'roses',
-    kicker: 'ROOM RULES',
-    title: 'there was never going to be just one flower.',
-    body:
-      'Roses, pink flowers, soft little details everywhere... because flowers somehow always make the room feel more like u.',
-    description: 'top-right',
-    controls: 'bottom',
+    label: "roses",
+    kicker: "ROOM RULES",
+    title: "there was never going to be just one flower.",
+    body: "Roses, pink flowers, soft little details everywhere... because flowers somehow always make the room feel more like u.",
+    description: "top-right",
+    controls: "bottom",
   },
   {
-    id: 'teddy',
+    id: "teddy",
     x: 29,
     y: 67,
     scale: 1.18,
-    label: 'little bear',
-    kicker: 'U KNOW THIS GUY 💛',
-    title: 'the little lemon guy survived every redesign.',
-    body:
-      'Because he is not random decoration to me. He is one of those tiny real things between us that deserves to stay.',
-    description: 'top-right',
-    controls: 'bottom',
+    label: "little bear",
+    kicker: "U KNOW THIS GUY 💛",
+    title: "the little lemon guy survived every redesign.",
+    body: "Because he is not random decoration to me. He is one of those tiny real things between us that deserves to stay.",
+    description: "top-right",
+    controls: "bottom",
   },
   {
-    id: 'faith',
+    id: "faith",
     x: 38,
     y: 16,
     scale: 1.16,
-    label: 'faith',
-    kicker: 'THE QUIETEST PART OF THE ROOM',
-    title: 'this belongs here because it belongs to who u are.',
-    body:
-      'Your faith did not need some huge dramatic setup. Just something calm, respectful and quietly present.',
-    description: 'bottom-right',
-    controls: 'bottom',
+    label: "faith",
+    kicker: "THE QUIETEST PART OF THE ROOM",
+    title: "this belongs here because it belongs to who u are.",
+    body: "Your faith did not need some huge dramatic setup. Just something calm, respectful and quietly present.",
+    description: "bottom-right",
+    controls: "bottom",
   },
   {
-    id: 'door',
+    id: "door",
     x: 53.5,
     y: 31,
     scale: 1.17,
-    label: 'the door',
-    kicker: 'LAST STOP',
-    title: 'okay... this one actually goes somewhere.',
-    body:
-      'That is everything I wanted u to see in here. When you are ready... open it and come with me.',
-    description: 'top-left',
-    controls: 'bottom',
+    label: "the door",
+    kicker: "LAST STOP",
+    title: "okay... this one actually goes somewhere.",
+    body: "That is everything I wanted u to see in here. When you are ready... open it and come with me.",
+    description: "top-left",
+    controls: "bottom",
   },
 ];
 
 const WALKTHROUGH = [
   {
-    action: 'next',
-    title: 'start here 😭',
-    body: 'tap this arrow once. I’ll move the room for u.',
+    action: "next",
+    title: "start here 😭",
+    body: "tap the arrow once(top of the screen). I’ll move the room for u.",
   },
   {
-    action: 'zoom-in',
-    title: 'now get closer.',
-    body: 'tap + once. zoom always stays centered on what we’re actually looking at.',
+    action: "zoom-in",
+    title: "now get closer.",
+    body: "tap + once. zoom always stays centered on what we’re actually looking at.",
   },
   {
-    action: 'info',
-    title: 'these little notes are optional.',
-    body: 'tap i once. it hides my explanations. u can turn them back on whenever u want.',
+    action: "info",
+    title: "these little notes are optional.",
+    body: "tap i once. it hides my explanations. u can turn them back on whenever u want.",
   },
   {
-    action: 'help',
-    title: 'last thing.',
-    body: 'tap ? once. if u forget anything, this explains the controls.',
+    action: "help",
+    title: "last thing.",
+    body: "tap ? once. if u forget anything, this explains the controls.",
   },
 ];
 
@@ -224,7 +211,7 @@ export class BirthdayRoomPage extends React.Component {
 
     try {
       walkthroughDone =
-        window.localStorage.getItem('fendisha-room-walkthrough') === 'done';
+        window.localStorage.getItem("fendisha-room-walkthrough") === "done";
     } catch (error) {
       walkthroughDone = false;
     }
@@ -267,14 +254,14 @@ export class BirthdayRoomPage extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('pointermove', this.onPointerMove, {
+    window.addEventListener("pointermove", this.onPointerMove, {
       passive: true,
     });
 
-    window.addEventListener('keydown', this.onKeyDown);
-    window.addEventListener('resize', this.onResize);
+    window.addEventListener("keydown", this.onKeyDown);
+    window.addEventListener("resize", this.onResize);
 
-    this.ambient = playAudio('/audio/sfx/birthday-room-ambience.wav', {
+    this.ambient = playAudio("/audio/sfx/birthday-room-ambience.wav", {
       volume: 0.14,
       loop: true,
     });
@@ -287,9 +274,9 @@ export class BirthdayRoomPage extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('pointermove', this.onPointerMove);
-    window.removeEventListener('keydown', this.onKeyDown);
-    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener("pointermove", this.onPointerMove);
+    window.removeEventListener("keydown", this.onKeyDown);
+    window.removeEventListener("resize", this.onResize);
 
     cancelAnimationFrame(this.animRaf);
     cancelAnimationFrame(this.pointerRaf);
@@ -316,17 +303,9 @@ export class BirthdayRoomPage extends React.Component {
     cancelAnimationFrame(this.pointerRaf);
 
     this.pointerRaf = requestAnimationFrame(() => {
-      const x = clamp(
-        (event.clientX / window.innerWidth - 0.5) * 2,
-        -1,
-        1
-      );
+      const x = clamp((event.clientX / window.innerWidth - 0.5) * 2, -1, 1);
 
-      const y = clamp(
-        (event.clientY / window.innerHeight - 0.5) * 2,
-        -1,
-        1
-      );
+      const y = clamp((event.clientY / window.innerHeight - 0.5) * 2, -1, 1);
 
       this.setState({
         pointerX: x,
@@ -344,27 +323,27 @@ export class BirthdayRoomPage extends React.Component {
       return;
     }
 
-    if (event.key === 'ArrowRight') {
+    if (event.key === "ArrowRight") {
       this.nextView();
     }
 
-    if (event.key === 'ArrowLeft') {
+    if (event.key === "ArrowLeft") {
       this.previousView();
     }
 
-    if (event.key === '+' || event.key === '=') {
+    if (event.key === "+" || event.key === "=") {
       this.zoomIn();
     }
 
-    if (event.key === '-') {
+    if (event.key === "-") {
       this.zoomOut();
     }
 
-    if (event.key.toLowerCase() === 'i') {
+    if (event.key.toLowerCase() === "i") {
       this.toggleDescriptions();
     }
 
-    if (event.key === 'Escape' || event.key === 'Home') {
+    if (event.key === "Escape" || event.key === "Home") {
       this.goHome();
     }
   };
@@ -378,18 +357,11 @@ export class BirthdayRoomPage extends React.Component {
   };
 
   getWalkthroughAction = () => {
-    if (
-      this.state.walkthroughDone ||
-      this.state.walkthroughStep < 0
-    ) {
+    if (this.state.walkthroughDone || this.state.walkthroughStep < 0) {
       return null;
     }
 
-    return (
-      WALKTHROUGH[
-        this.state.walkthroughStep
-      ]?.action || null
-    );
+    return WALKTHROUGH[this.state.walkthroughStep]?.action || null;
   };
 
   advanceWalkthrough = (action) => {
@@ -397,25 +369,17 @@ export class BirthdayRoomPage extends React.Component {
       return true;
     }
 
-    const expected =
-      this.getWalkthroughAction();
+    const expected = this.getWalkthroughAction();
 
     if (expected !== action) {
       return false;
     }
 
-    const nextStep =
-      this.state.walkthroughStep + 1;
+    const nextStep = this.state.walkthroughStep + 1;
 
-    if (
-      nextStep >=
-      WALKTHROUGH.length
-    ) {
+    if (nextStep >= WALKTHROUGH.length) {
       try {
-        window.localStorage.setItem(
-          'fendisha-room-walkthrough',
-          'done'
-        );
+        window.localStorage.setItem("fendisha-room-walkthrough", "done");
       } catch (error) {
         // continue normally
       }
@@ -430,8 +394,7 @@ export class BirthdayRoomPage extends React.Component {
     }
 
     this.setState({
-      walkthroughStep:
-        nextStep,
+      walkthroughStep: nextStep,
     });
 
     return true;
@@ -439,9 +402,7 @@ export class BirthdayRoomPage extends React.Component {
 
   resetWalkthrough = () => {
     try {
-      window.localStorage.removeItem(
-        'fendisha-room-walkthrough'
-      );
+      window.localStorage.removeItem("fendisha-room-walkthrough");
     } catch (error) {
       // no-op
     }
@@ -455,635 +416,339 @@ export class BirthdayRoomPage extends React.Component {
     });
   };
 
-  animateCamera = (
-    targetIndex,
-    targetZoom = 0
-  ) => {
-    if (
-      this.state.transitioning
-    ) {
+  animateCamera = (targetIndex, targetZoom = 0) => {
+    if (this.state.transitioning) {
       return;
     }
 
-    cancelAnimationFrame(
-      this.animRaf
+    cancelAnimationFrame(this.animRaf);
+
+    const target = VIEWS[targetIndex];
+
+    const startX = this.state.cameraX;
+
+    const startY = this.state.cameraY;
+
+    const startScale = this.state.cameraScale;
+
+    const endScale = target.scale + targetZoom;
+
+    const distance = Math.abs(target.x - startX) + Math.abs(target.y - startY);
+
+    const duration = clamp(
+      760 + distance * 7,
+
+      CAMERA_DURATION_MIN,
+
+      CAMERA_DURATION_MAX,
     );
 
-    const target =
-      VIEWS[targetIndex];
-
-    const startX =
-      this.state.cameraX;
-
-    const startY =
-      this.state.cameraY;
-
-    const startScale =
-      this.state.cameraScale;
-
-    const endScale =
-      target.scale +
-      targetZoom;
-
-    const distance =
-      Math.abs(
-        target.x -
-          startX
-      ) +
-      Math.abs(
-        target.y -
-          startY
-      );
-
-    const duration =
-      clamp(
-        760 +
-          distance * 7,
-
-        CAMERA_DURATION_MIN,
-
-        CAMERA_DURATION_MAX
-      );
-
-    const startedAt =
-      performance.now();
+    const startedAt = performance.now();
 
     this.setState({
-      currentView:
-        targetIndex,
+      currentView: targetIndex,
 
-      manualZoom:
-        targetZoom,
+      manualZoom: targetZoom,
 
-      introVisible:
-        false,
+      introVisible: false,
     });
 
     const tick = (now) => {
-      const t =
-        ease(
-          (
-            now -
-            startedAt
-          ) /
-            duration
-        );
+      const t = ease((now - startedAt) / duration);
 
       this.setState({
-        cameraX:
-          lerp(
-            startX,
-            target.x,
-            t
-          ),
+        cameraX: lerp(startX, target.x, t),
 
-        cameraY:
-          lerp(
-            startY,
-            target.y,
-            t
-          ),
+        cameraY: lerp(startY, target.y, t),
 
-        cameraScale:
-          lerp(
-            startScale,
-            endScale,
-            t
-          ),
+        cameraScale: lerp(startScale, endScale, t),
       });
 
-      if (
-        t <
-        0.999
-      ) {
-        this.animRaf =
-          requestAnimationFrame(
-            tick
-          );
+      if (t < 0.999) {
+        this.animRaf = requestAnimationFrame(tick);
       } else {
         this.setState({
-          cameraX:
-            target.x,
+          cameraX: target.x,
 
-          cameraY:
-            target.y,
+          cameraY: target.y,
 
-          cameraScale:
-            endScale,
+          cameraScale: endScale,
         });
       }
     };
 
-    this.animRaf =
-      requestAnimationFrame(
-        tick
-      );
+    this.animRaf = requestAnimationFrame(tick);
 
-    playSfx(
-      '/audio/sfx/mood-sparkle.wav',
-      {
-        volume: 0.07,
-        playbackRate: 0.92,
-      }
-    );
+    playSfx("/audio/sfx/mood-sparkle.wav", {
+      volume: 0.07,
+      playbackRate: 0.92,
+    });
   };
 
-  animateZoom = (
-    targetZoom
-  ) => {
-    if (
-      this.state.transitioning
-    ) {
+  animateZoom = (targetZoom) => {
+    if (this.state.transitioning) {
       return;
     }
 
-    cancelAnimationFrame(
-      this.animRaf
-    );
+    cancelAnimationFrame(this.animRaf);
 
-    const view =
-      VIEWS[
-        this.state.currentView
-      ];
+    const view = VIEWS[this.state.currentView];
 
-    const startScale =
-      this.state.cameraScale;
+    const startScale = this.state.cameraScale;
 
-    const startX =
-      this.state.cameraX;
+    const startX = this.state.cameraX;
 
-    const startY =
-      this.state.cameraY;
+    const startY = this.state.cameraY;
 
-    const targetScale =
-      Math.max(
-        1,
-        view.scale +
-          targetZoom
-      );
+    const targetScale = Math.max(1, view.scale + targetZoom);
 
-    const startedAt =
-      performance.now();
+    const startedAt = performance.now();
 
     const tick = (now) => {
-      const t =
-        ease(
-          (
-            now -
-            startedAt
-          ) /
-            ZOOM_DURATION
-        );
+      const t = ease((now - startedAt) / ZOOM_DURATION);
 
       this.setState({
-        cameraX:
-          lerp(
-            startX,
-            view.x,
-            t
-          ),
+        cameraX: lerp(startX, view.x, t),
 
-        cameraY:
-          lerp(
-            startY,
-            view.y,
-            t
-          ),
+        cameraY: lerp(startY, view.y, t),
 
-        cameraScale:
-          lerp(
-            startScale,
-            targetScale,
-            t
-          ),
+        cameraScale: lerp(startScale, targetScale, t),
       });
 
-      if (
-        t <
-        0.999
-      ) {
-        this.animRaf =
-          requestAnimationFrame(
-            tick
-          );
+      if (t < 0.999) {
+        this.animRaf = requestAnimationFrame(tick);
       } else {
         this.setState({
-          cameraX:
-            view.x,
+          cameraX: view.x,
 
-          cameraY:
-            view.y,
+          cameraY: view.y,
 
-          cameraScale:
-            targetScale,
+          cameraScale: targetScale,
         });
       }
     };
 
-    this.animRaf =
-      requestAnimationFrame(
-        tick
-      );
+    this.animRaf = requestAnimationFrame(tick);
   };
 
   previousView = () => {
-    if (
-      this.state.transitioning
-    ) {
+    if (this.state.transitioning) {
       return;
     }
 
-    if (
-      !this.state.walkthroughDone
-    ) {
+    if (!this.state.walkthroughDone) {
       return;
     }
 
-    const nextIndex =
-      Math.max(
-        0,
-        this.state.currentView -
-          1
-      );
+    const nextIndex = Math.max(0, this.state.currentView - 1);
 
-    this.animateCamera(
-      nextIndex,
-      0
-    );
+    this.animateCamera(nextIndex, 0);
   };
 
   nextView = () => {
-    if (
-      this.state.transitioning
-    ) {
+    if (this.state.transitioning) {
       return;
     }
 
-    if (
-      !this.state.walkthroughDone
-    ) {
-      if (
-        !this.advanceWalkthrough(
-          'next'
-        )
-      ) {
+    if (!this.state.walkthroughDone) {
+      if (!this.advanceWalkthrough("next")) {
         return;
       }
     }
 
-    if (
-      this.state.currentView ===
-      VIEWS.length - 1
-    ) {
+    if (this.state.currentView === VIEWS.length - 1) {
       this.enterDoor();
       return;
     }
 
-    const nextIndex =
-      Math.min(
-        VIEWS.length - 1,
-        this.state.currentView +
-          1
-      );
+    const nextIndex = Math.min(VIEWS.length - 1, this.state.currentView + 1);
 
-    this.animateCamera(
-      nextIndex,
-      0
-    );
+    this.animateCamera(nextIndex, 0);
   };
 
   goHome = () => {
-    if (
-      this.state.transitioning ||
-      !this.state.walkthroughDone
-    ) {
+    if (this.state.transitioning || !this.state.walkthroughDone) {
       return;
     }
 
-    this.animateCamera(
-      0,
-      0
-    );
+    this.animateCamera(0, 0);
   };
 
   zoomIn = () => {
-    if (
-      this.state.transitioning
-    ) {
+    if (this.state.transitioning) {
       return;
     }
 
-    if (
-      !this.state.walkthroughDone
-    ) {
-      if (
-        !this.advanceWalkthrough(
-          'zoom-in'
-        )
-      ) {
+    if (!this.state.walkthroughDone) {
+      if (!this.advanceWalkthrough("zoom-in")) {
         return;
       }
     }
 
-    const nextZoom =
-      clamp(
-        this.state.manualZoom +
-          ZOOM_STEP,
+    const nextZoom = clamp(
+      this.state.manualZoom + ZOOM_STEP,
 
-        0,
+      0,
 
-        MAX_MANUAL_ZOOM
-      );
+      MAX_MANUAL_ZOOM,
+    );
 
     this.setState({
-      manualZoom:
-        nextZoom,
+      manualZoom: nextZoom,
 
-      introVisible:
-        false,
+      introVisible: false,
     });
 
-    this.animateZoom(
-      nextZoom
-    );
+    this.animateZoom(nextZoom);
   };
 
   zoomOut = () => {
-    if (
-      this.state.transitioning ||
-      !this.state.walkthroughDone
-    ) {
+    if (this.state.transitioning || !this.state.walkthroughDone) {
       return;
     }
 
-    const nextZoom =
-      clamp(
-        this.state.manualZoom -
-          ZOOM_STEP,
+    const nextZoom = clamp(
+      this.state.manualZoom - ZOOM_STEP,
 
-        MIN_MANUAL_ZOOM,
+      MIN_MANUAL_ZOOM,
 
-        MAX_MANUAL_ZOOM
-      );
+      MAX_MANUAL_ZOOM,
+    );
 
     this.setState({
-      manualZoom:
-        nextZoom,
+      manualZoom: nextZoom,
 
-      introVisible:
-        false,
+      introVisible: false,
     });
 
-    this.animateZoom(
-      nextZoom
-    );
+    this.animateZoom(nextZoom);
   };
 
   toggleDescriptions = () => {
-    if (
-      this.state.transitioning
-    ) {
+    if (this.state.transitioning) {
       return;
     }
 
-    if (
-      !this.state.walkthroughDone
-    ) {
-      if (
-        !this.advanceWalkthrough(
-          'info'
-        )
-      ) {
+    if (!this.state.walkthroughDone) {
+      if (!this.advanceWalkthrough("info")) {
         return;
       }
 
       this.setState({
-        showDescriptions:
-          false,
+        showDescriptions: false,
 
-        introVisible:
-          false,
+        introVisible: false,
       });
 
       return;
     }
 
-    this.setState(
-      (state) => ({
-        showDescriptions:
-          !state.showDescriptions,
+    this.setState((state) => ({
+      showDescriptions: !state.showDescriptions,
 
-        introVisible:
-          false,
-      })
-    );
+      introVisible: false,
+    }));
   };
 
   openHelp = () => {
-    if (
-      this.state.transitioning
-    ) {
+    if (this.state.transitioning) {
       return;
     }
 
-    if (
-      !this.state.walkthroughDone
-    ) {
-      if (
-        !this.advanceWalkthrough(
-          'help'
-        )
-      ) {
+    if (!this.state.walkthroughDone) {
+      if (!this.advanceWalkthrough("help")) {
         return;
       }
     }
 
     this.setState({
-      helpOpen:
-        true,
+      helpOpen: true,
 
-      introVisible:
-        false,
+      introVisible: false,
 
-      showDescriptions:
-        true,
+      showDescriptions: true,
     });
   };
 
   enterDoor = () => {
-    if (
-      this.state.transitioning
-    ) {
+    if (this.state.transitioning) {
       return;
     }
 
-    if (
-      this.state.currentView !==
-      VIEWS.length - 1
-    ) {
-      this.animateCamera(
-        VIEWS.length - 1,
-        0
-      );
+    if (this.state.currentView !== VIEWS.length - 1) {
+      this.animateCamera(VIEWS.length - 1, 0);
 
       return;
     }
 
-    playSfx(
-      '/audio/sfx/door-open.wav',
-      {
-        volume: 0.62,
-        playbackRate: 0.96,
-      }
-    );
-
-    this.setState({
-      transitioning:
-        true,
-
-      transitionPhase:
-        1,
-
-      helpOpen:
-        false,
-
-      introVisible:
-        false,
+    playSfx("/audio/sfx/door-open.wav", {
+      volume: 0.62,
+      playbackRate: 0.96,
     });
 
-    this.transitionTimer =
-      setTimeout(() => {
-        this.setState({
-          transitionPhase:
-            2,
-        });
-      }, 220);
+    this.setState({
+      transitioning: true,
 
-    this.pageTimer =
-      setTimeout(() => {
-        this.props.onContinue(
-          'mood-choice'
-        );
-      }, 1250);
+      transitionPhase: 1,
+
+      helpOpen: false,
+
+      introVisible: false,
+    });
+
+    this.transitionTimer = setTimeout(() => {
+      this.setState({
+        transitionPhase: 2,
+      });
+    }, 220);
+
+    this.pageTimer = setTimeout(() => {
+      this.props.onContinue("mood-choice");
+    }, 1250);
   };
 
   getImageFrame() {
-    const viewportWidth =
-      Math.max(
-        1,
-        window.innerWidth ||
-          1
-      );
+    const viewportWidth = Math.max(1, window.innerWidth || 1);
 
-    const viewportHeight =
-      Math.max(
-        1,
-        window.innerHeight ||
-          1
-      );
+    const viewportHeight = Math.max(1, window.innerHeight || 1);
 
-    const isPortrait =
-      viewportHeight >
-      viewportWidth *
-        1.08;
+    const isPortrait = viewportHeight > viewportWidth * 1.08;
 
-    const coverScale =
-      Math.max(
-        viewportWidth /
-          SCENE_WIDTH,
+    const coverScale = Math.max(
+      viewportWidth / SCENE_WIDTH,
 
-        viewportHeight /
-          SCENE_HEIGHT
-      );
+      viewportHeight / SCENE_HEIGHT,
+    );
 
-    const scale =
-      isPortrait
-        ? 1 +
-          (
-            this.state
-              .cameraScale -
-            1
-          ) *
-            0.42
+    const scale = isPortrait
+      ? 1 + (this.state.cameraScale - 1) * 0.42
+      : this.state.cameraScale;
 
-        : this.state
-            .cameraScale;
+    const width = SCENE_WIDTH * coverScale * scale;
 
-    const width =
-      SCENE_WIDTH *
-      coverScale *
-      scale;
+    const height = SCENE_HEIGHT * coverScale * scale;
 
-    const height =
-      SCENE_HEIGHT *
-      coverScale *
-      scale;
+    const focusX = (this.state.cameraX / 100) * width;
 
-    const focusX =
-      (
-        this.state.cameraX /
-        100
-      ) *
-      width;
+    const focusY = (this.state.cameraY / 100) * height;
 
-    const focusY =
-      (
-        this.state.cameraY /
-        100
-      ) *
-      height;
+    let left = viewportWidth / 2 - focusX;
 
-    let left =
-      viewportWidth /
-        2 -
-      focusX;
+    let top = viewportHeight / 2 - focusY;
 
-    let top =
-      viewportHeight /
-        2 -
-      focusY;
+    const minLeft = Math.min(0, viewportWidth - width);
 
-    const minLeft =
-      Math.min(
-        0,
-        viewportWidth -
-          width
-      );
+    const minTop = Math.min(0, viewportHeight - height);
 
-    const minTop =
-      Math.min(
-        0,
-        viewportHeight -
-          height
-      );
+    left = clamp(left, minLeft, 0);
 
-    left =
-      clamp(
-        left,
-        minLeft,
-        0
-      );
+    top = clamp(top, minTop, 0);
 
-    top =
-      clamp(
-        top,
-        minTop,
-        0
-      );
+    const pointerAmount = isPortrait ? 0 : 6;
 
-    const pointerAmount =
-      isPortrait
-        ? 0
-        : 6;
+    left += this.state.pointerX * -pointerAmount;
 
-    left +=
-      this.state.pointerX *
-      -pointerAmount;
-
-    top +=
-      this.state.pointerY *
-      -pointerAmount *
-      0.45;
+    top += this.state.pointerY * -pointerAmount * 0.45;
 
     return {
       width,
@@ -1096,35 +761,16 @@ export class BirthdayRoomPage extends React.Component {
     };
   }
 
-  mapImagePoint(
-    xPercent,
-    yPercent,
-    frame
-  ) {
+  mapImagePoint(xPercent, yPercent, frame) {
     return {
-      x:
-        frame.left +
-        (
-          xPercent /
-          100
-        ) *
-          frame.width,
+      x: frame.left + (xPercent / 100) * frame.width,
 
-      y:
-        frame.top +
-        (
-          yPercent /
-          100
-        ) *
-          frame.height,
+      y: frame.top + (yPercent / 100) * frame.height,
     };
   }
 
-  onTouchStart = (
-    event
-  ) => {
-    const touch =
-      event.touches?.[0];
+  onTouchStart = (event) => {
+    const touch = event.touches?.[0];
 
     if (!touch) {
       return;
@@ -1136,9 +782,7 @@ export class BirthdayRoomPage extends React.Component {
     };
   };
 
-  onTouchEnd = (
-    event
-  ) => {
+  onTouchEnd = (event) => {
     if (
       !this.touchStart ||
       this.state.transitioning ||
@@ -1147,21 +791,15 @@ export class BirthdayRoomPage extends React.Component {
       return;
     }
 
-    const touch =
-      event.changedTouches?.[0];
+    const touch = event.changedTouches?.[0];
 
     if (!touch) {
       return;
     }
 
-    const dx =
-      touch.clientX -
-      this.touchStart.x;
+    const dx = touch.clientX - this.touchStart.x;
 
-    if (
-      Math.abs(dx) >
-      55
-    ) {
+    if (Math.abs(dx) > 55) {
       if (dx < 0) {
         this.nextView();
       } else {
@@ -1169,130 +807,69 @@ export class BirthdayRoomPage extends React.Component {
       }
     }
 
-    this.touchStart =
-      null;
+    this.touchStart = null;
   };
 
-  getDescriptionClass(
-    view
-  ) {
+  getDescriptionClass(view) {
     const positions = {
-      'top-left': `
+      "top-left": `
         sm:left-[clamp(1rem,4vw,3.5rem)]
         sm:top-[clamp(5.5rem,13vh,8rem)]
       `,
 
-      'top-right': `
+      "top-right": `
         sm:right-[clamp(1rem,4vw,3.5rem)]
         sm:top-[clamp(5.5rem,13vh,8rem)]
       `,
 
-      'bottom-left': `
+      "bottom-left": `
         sm:left-[clamp(1rem,4vw,3.5rem)]
         sm:bottom-[6.5rem]
       `,
 
-      'bottom-right': `
+      "bottom-right": `
         sm:right-[clamp(1rem,4vw,3.5rem)]
         sm:bottom-[6.5rem]
       `,
     };
 
-    return (
-      positions[
-        view.description
-      ] ||
-      positions[
-        'top-left'
-      ]
-    );
+    return positions[view.description] || positions["top-left"];
   }
 
-  renderPointer(
-    view,
-    frame
-  ) {
+  renderPointer(view, frame) {
     if (
-      !this.state
-        .showDescriptions ||
-      this.state
-        .introVisible ||
+      !this.state.showDescriptions ||
+      this.state.introVisible ||
       view.arrow === false
     ) {
       return null;
     }
 
-    const target =
-      this.mapImagePoint(
-        view.x,
-        view.y,
-        frame
-      );
+    const target = this.mapImagePoint(view.x, view.y, frame);
 
-    const vw =
-      frame.viewportWidth;
+    const vw = frame.viewportWidth;
 
-    const vh =
-      frame.viewportHeight;
+    const vh = frame.viewportHeight;
 
-    const rightCard =
-      view.description.includes(
-        'right'
-      );
+    const rightCard = view.description.includes("right");
 
-    const bottomCard =
-      view.description.includes(
-        'bottom'
-      );
+    const bottomCard = view.description.includes("bottom");
 
-    const startX =
-      frame.isPortrait
-        ? vw * 0.5
+    const startX = frame.isPortrait ? vw * 0.5 : rightCard ? vw - 305 : 305;
 
-        : rightCard
-          ? vw - 305
-          : 305;
+    const startY = frame.isPortrait ? vh - 185 : bottomCard ? vh - 170 : 165;
 
-    const startY =
-      frame.isPortrait
-        ? vh - 185
+    const dx = target.x - startX;
 
-        : bottomCard
-          ? vh - 170
-          : 165;
+    const dy = target.y - startY;
 
-    const dx =
-      target.x -
-      startX;
+    const length = Math.sqrt(dx * dx + dy * dy) || 1;
 
-    const dy =
-      target.y -
-      startY;
+    const stopBack = 22;
 
-    const length =
-      Math.sqrt(
-        dx * dx +
-        dy * dy
-      ) || 1;
+    const endX = target.x - (dx / length) * stopBack;
 
-    const stopBack =
-      22;
-
-    const endX =
-      target.x -
-      (
-        dx /
-        length
-      ) *
-        stopBack;
-
-    const endY =
-      target.y -
-      (
-        dy /
-        length
-      ) *
-        stopBack;
+    const endY = target.y - (dy / length) * stopBack;
 
     return html`
       <svg
@@ -1316,10 +893,7 @@ export class BirthdayRoomPage extends React.Component {
             orient="auto"
             markerUnits="strokeWidth"
           >
-            <path
-              d="M0,0 L8,4 L0,8 Z"
-              fill="rgba(112,63,141,.72)"
-            />
+            <path d="M0,0 L8,4 L0,8 Z" fill="rgba(112,63,141,.72)" />
           </marker>
         </defs>
 
@@ -1328,13 +902,7 @@ export class BirthdayRoomPage extends React.Component {
             M ${startX} ${startY}
             Q
             ${(startX + endX) / 2}
-            ${
-              Math.min(
-                startY,
-                endY
-              ) -
-              16
-            }
+            ${Math.min(startY, endY) - 16}
             ${endX}
             ${endY}
           `}
@@ -1364,15 +932,8 @@ export class BirthdayRoomPage extends React.Component {
     `;
   }
 
-  renderDescription(
-    view
-  ) {
-    if (
-      !this.state
-        .showDescriptions ||
-      this.state
-        .introVisible
-    ) {
+  renderDescription(view) {
+    if (!this.state.showDescriptions || this.state.introVisible) {
       return null;
     }
 
@@ -1390,9 +951,7 @@ export class BirthdayRoomPage extends React.Component {
           sm:right-auto
           sm:bottom-auto
 
-          ${this.getDescriptionClass(
-            view
-          )}
+          ${this.getDescriptionClass(view)}
         `}
       >
         <div
@@ -1447,21 +1006,8 @@ export class BirthdayRoomPage extends React.Component {
                 text-purple-600
               "
             >
-              ${String(
-                this.state
-                  .currentView +
-                  1
-              ).padStart(
-                2,
-                '0'
-              )}
-              /
-              ${String(
-                VIEWS.length
-              ).padStart(
-                2,
-                '0'
-              )}
+              ${String(this.state.currentView + 1).padStart(2, "0")} /
+              ${String(VIEWS.length).padStart(2, "0")}
             </span>
           </div>
 
@@ -1497,9 +1043,7 @@ export class BirthdayRoomPage extends React.Component {
   }
 
   renderHelp() {
-    if (
-      !this.state.helpOpen
-    ) {
+    if (!this.state.helpOpen) {
       return null;
     }
 
@@ -1520,10 +1064,8 @@ export class BirthdayRoomPage extends React.Component {
         "
         onClick=${() =>
           this.setState({
-            helpOpen:
-              false,
-          })
-        }
+            helpOpen: false,
+          })}
       >
         <div
           className="
@@ -1539,11 +1081,7 @@ export class BirthdayRoomPage extends React.Component {
             backdrop-blur-2xl
             sm:p-6
           "
-          onClick=${(
-            event
-          ) =>
-            event.stopPropagation()
-          }
+          onClick=${(event) => event.stopPropagation()}
         >
           <button
             type="button"
@@ -1563,10 +1101,8 @@ export class BirthdayRoomPage extends React.Component {
             "
             onClick=${() =>
               this.setState({
-                helpOpen:
-                  false,
-              })
-            }
+                helpOpen: false,
+              })}
             aria-label="Close help"
           >
             ×
@@ -1609,43 +1145,29 @@ export class BirthdayRoomPage extends React.Component {
             "
           >
             <p>
-              <strong className="text-purple-800">
-                ← / →
-              </strong>
-              ${' '}
-              move through all 13 stops.
+              <strong className="text-purple-800"> ← / → </strong>
+              ${" "} move through all 13 stops.
             </p>
 
             <p>
-              <strong className="text-purple-800">
-                + / −
-              </strong>
-              ${' '}
-              get closer to the exact thing we are looking at or back away.
+              <strong className="text-purple-800"> + / − </strong>
+              ${" "} get closer to the exact thing we are looking at or back
+              away.
             </p>
 
             <p>
-              <strong className="text-purple-800">
-                ⌂
-              </strong>
-              ${' '}
-              return to the whole room.
+              <strong className="text-purple-800"> ⌂ </strong>
+              ${" "} return to the whole room.
             </p>
 
             <p>
-              <strong className="text-purple-800">
-                i
-              </strong>
-              ${' '}
-              hide or show my explanations.
+              <strong className="text-purple-800"> i </strong>
+              ${" "} hide or show my explanations.
             </p>
 
             <p>
-              <strong className="text-purple-800">
-                mouse
-              </strong>
-              ${' '}
-              the room moves just a tiny bit with u.
+              <strong className="text-purple-800"> mouse </strong>
+              ${" "} the room moves just a tiny bit with u.
             </p>
 
             <p
@@ -1653,11 +1175,8 @@ export class BirthdayRoomPage extends React.Component {
                 sm:hidden
               "
             >
-              <strong className="text-purple-800">
-                phone
-              </strong>
-              ${' '}
-              swipe left/right or use the arrows.
+              <strong className="text-purple-800"> phone </strong>
+              ${" "} swipe left/right or use the arrows.
             </p>
           </div>
 
@@ -1696,10 +1215,7 @@ export class BirthdayRoomPage extends React.Component {
       return null;
     }
 
-    const step =
-      WALKTHROUGH[
-        this.state.walkthroughStep
-      ];
+    const step = WALKTHROUGH[this.state.walkthroughStep];
 
     return html`
       <div
@@ -1713,11 +1229,9 @@ export class BirthdayRoomPage extends React.Component {
         "
         style=${{
           bottom:
-            VIEWS[
-              this.state.currentView
-            ].controls === 'top'
-              ? '1rem'
-              : '6.4rem',
+            VIEWS[this.state.currentView].controls === "top"
+              ? "1rem"
+              : "6.4rem",
         }}
       >
         <div
@@ -1742,10 +1256,7 @@ export class BirthdayRoomPage extends React.Component {
               text-purple-500
             "
           >
-            tiny tutorial
-            ${' · '}
-            ${this.state.walkthroughStep + 1}
-            /
+            tiny tutorial ${" · "} ${this.state.walkthroughStep + 1} /
             ${WALKTHROUGH.length}
           </p>
 
@@ -1776,14 +1287,8 @@ export class BirthdayRoomPage extends React.Component {
     `;
   }
 
-  renderCoachHand(
-    action
-  ) {
-    if (
-      this.state.walkthroughDone ||
-      this.getWalkthroughAction() !==
-        action
-    ) {
+  renderCoachHand(action) {
+    if (this.state.walkthroughDone || this.getWalkthroughAction() !== action) {
       return null;
     }
 
@@ -1808,48 +1313,22 @@ export class BirthdayRoomPage extends React.Component {
   }
 
   render() {
-    const frame =
-      this.getImageFrame();
+    const frame = this.getImageFrame();
 
-    const view =
-      VIEWS[
-        this.state.currentView
-      ];
+    const view = VIEWS[this.state.currentView];
 
-    const isDoor =
-      view.id ===
-      'door';
+    const isDoor = view.id === "door";
 
-    const controlsAtTop =
-      view.controls ===
-      'top';
+    const controlsAtTop = view.controls === "top";
 
-    const progressPercent =
-      (
-        (
-          this.state
-            .currentView +
-          1
-        ) /
-        VIEWS.length
-      ) *
-      100;
+    const progressPercent = ((this.state.currentView + 1) / VIEWS.length) * 100;
 
-    const walkthroughAction =
-      this.getWalkthroughAction();
+    const walkthroughAction = this.getWalkthroughAction();
 
     const tutorialActive =
-      !this.state
-        .walkthroughDone &&
-      !this.state
-        .introVisible;
+      !this.state.walkthroughDone && !this.state.introVisible;
 
-    const canUse = (
-      action
-    ) =>
-      !tutorialActive ||
-      walkthroughAction ===
-        action;
+    const canUse = (action) => !tutorialActive || walkthroughAction === action;
 
     return html`
       <section
@@ -1876,27 +1355,21 @@ export class BirthdayRoomPage extends React.Component {
             will-change-transform
           "
           style=${{
-            width:
-              `${frame.width}px`,
+            width: `${frame.width}px`,
 
-            height:
-              `${frame.height}px`,
+            height: `${frame.height}px`,
 
-            transform:
-              `translate3d(
+            transform: `translate3d(
                 ${frame.left}px,
                 ${frame.top}px,
                 0
               )`,
 
-            transition:
-              'filter 700ms ease',
+            transition: "filter 700ms ease",
 
-            filter:
-              this.state
-                .transitioning
-                ? 'blur(2px) brightness(1.08)'
-                : 'none',
+            filter: this.state.transitioning
+              ? "blur(2px) brightness(1.08)"
+              : "none",
           }}
           alt="A lavender dream room"
           draggable="false"
@@ -1916,10 +1389,7 @@ export class BirthdayRoomPage extends React.Component {
           "
         ></div>
 
-        ${this.renderPointer(
-          view,
-          frame
-        )}
+        ${this.renderPointer(view, frame)}
 
         <div
           className="
@@ -1935,23 +1405,13 @@ export class BirthdayRoomPage extends React.Component {
             duration-700
           "
           style=${{
-            opacity:
-              this.state
-                .introVisible
-                ? 1
-                : 0,
+            opacity: this.state.introVisible ? 1 : 0,
 
-            transform:
-              this.state
-                .introVisible
-                ? 'translateY(0)'
-                : 'translateY(-18px)',
+            transform: this.state.introVisible
+              ? "translateY(0)"
+              : "translateY(-18px)",
 
-            pointerEvents:
-              this.state
-                .introVisible
-                ? 'auto'
-                : 'none',
+            pointerEvents: this.state.introVisible ? "auto" : "none",
           }}
         >
           <div
@@ -2032,9 +1492,9 @@ export class BirthdayRoomPage extends React.Component {
                 sm:text-sm
               "
             >
-              not the real one yet 😭...
-              just a room made from little things that somehow feel like u.
-              I left my explanations on because none of this was random.
+              not the real one yet 😭... just a room made from little things
+              that somehow feel like u. I left my explanations on because none
+              of this was random.
             </p>
 
             <p
@@ -2049,12 +1509,10 @@ export class BirthdayRoomPage extends React.Component {
               go be nosy, fkr. 13 stops before that door.
             </p>
 
-            ${
-              !this.state
-                .walkthroughDone
-                ? html`
-                    <p
-                      className="
+            ${!this.state.walkthroughDone
+              ? html`
+                  <p
+                    className="
                         mt-3
                         text-[8px]
                         font-black
@@ -2062,20 +1520,16 @@ export class BirthdayRoomPage extends React.Component {
                         tracking-[.15em]
                         text-purple-500/70
                       "
-                    >
-                      close this and I’ll teach u the controls in like 10 seconds 😂
-                    </p>
-                  `
-                : null
-            }
+                  >
+                    close this and I’ll teach u the controls in like 10 seconds
+                    😂
+                  </p>
+                `
+              : null}
           </div>
         </div>
 
-        ${this.renderDescription(
-          view
-        )}
-
-        ${this.renderWalkthrough()}
+        ${this.renderDescription(view)} ${this.renderWalkthrough()}
 
         <div
           className=${`
@@ -2096,20 +1550,11 @@ export class BirthdayRoomPage extends React.Component {
             }
           `}
           style=${{
-            opacity:
-              this.state
-                .transitioning
-                ? 0
-                : 1,
+            opacity: this.state.transitioning ? 0 : 1,
 
-            transition:
-              'all 600ms cubic-bezier(.22,.8,.2,1)',
+            transition: "all 600ms cubic-bezier(.22,.8,.2,1)",
 
-            pointerEvents:
-              this.state
-                .transitioning
-                ? 'none'
-                : 'auto',
+            pointerEvents: this.state.transitioning ? "none" : "auto",
           }}
         >
           <div
@@ -2142,8 +1587,7 @@ export class BirthdayRoomPage extends React.Component {
                   duration-700
                 "
                 style=${{
-                  width:
-                    `${progressPercent}%`,
+                  width: `${progressPercent}%`,
                 }}
               ></div>
             </div>
@@ -2177,11 +1621,7 @@ export class BirthdayRoomPage extends React.Component {
                   sm:w-10
                 "
                 onClick=${this.previousView}
-                disabled=${
-                  this.state
-                    .currentView === 0 ||
-                  tutorialActive
-                }
+                disabled=${this.state.currentView === 0 || tutorialActive}
                 aria-label="Previous"
                 title="previous"
               >
@@ -2267,28 +1707,22 @@ export class BirthdayRoomPage extends React.Component {
                   sm:w-10
 
                   ${
-                    walkthroughAction ===
-                    'zoom-in'
+                    walkthroughAction === "zoom-in"
                       ? `
                         ring-4
                         ring-purple-300/45
                         bg-purple-100
                         scale-110
                       `
-                      : ''
+                      : ""
                   }
                 `}
                 onClick=${this.zoomIn}
-                disabled=${!canUse(
-                  'zoom-in'
-                )}
+                disabled=${!canUse("zoom-in")}
                 aria-label="Zoom in"
                 title="emphasize this"
               >
-                ${this.renderCoachHand(
-                  'zoom-in'
-                )}
-                +
+                ${this.renderCoachHand("zoom-in")} +
               </button>
 
               <button
@@ -2329,38 +1763,22 @@ export class BirthdayRoomPage extends React.Component {
                   }
 
                   ${
-                    walkthroughAction ===
-                    'next'
+                    walkthroughAction === "next"
                       ? `
                         ring-4
                         ring-purple-300/45
                         bg-purple-100
                         scale-110
                       `
-                      : ''
+                      : ""
                   }
                 `}
                 onClick=${this.nextView}
-                disabled=${!canUse(
-                  'next'
-                )}
-                aria-label=${isDoor
-                  ? 'Open the door'
-                  : 'Next'
-                }
-                title=${isDoor
-                  ? 'open it'
-                  : 'next'
-                }
+                disabled=${!canUse("next")}
+                aria-label=${isDoor ? "Open the door" : "Next"}
+                title=${isDoor ? "open it" : "next"}
               >
-                ${this.renderCoachHand(
-                  'next'
-                )}
-
-                ${isDoor
-                  ? 'open it →'
-                  : '→'
-                }
+                ${this.renderCoachHand("next")} ${isDoor ? "open it →" : "→"}
               </button>
 
               <div
@@ -2397,8 +1815,7 @@ export class BirthdayRoomPage extends React.Component {
                   sm:w-10
 
                   ${
-                    this.state
-                      .showDescriptions
+                    this.state.showDescriptions
                       ? `
                         border-purple-200
                         bg-purple-100
@@ -2412,27 +1829,21 @@ export class BirthdayRoomPage extends React.Component {
                   }
 
                   ${
-                    walkthroughAction ===
-                    'info'
+                    walkthroughAction === "info"
                       ? `
                         ring-4
                         ring-purple-300/45
                         scale-110
                       `
-                      : ''
+                      : ""
                   }
                 `}
                 onClick=${this.toggleDescriptions}
-                disabled=${!canUse(
-                  'info'
-                )}
+                disabled=${!canUse("info")}
                 aria-label="Toggle explanations"
                 title="explanations"
               >
-                ${this.renderCoachHand(
-                  'info'
-                )}
-                i
+                ${this.renderCoachHand("info")} i
               </button>
 
               <button
@@ -2464,27 +1875,21 @@ export class BirthdayRoomPage extends React.Component {
                   sm:w-10
 
                   ${
-                    walkthroughAction ===
-                    'help'
+                    walkthroughAction === "help"
                       ? `
                         ring-4
                         ring-purple-300/45
                         scale-110
                       `
-                      : ''
+                      : ""
                   }
                 `}
                 onClick=${this.openHelp}
-                disabled=${!canUse(
-                  'help'
-                )}
+                disabled=${!canUse("help")}
                 aria-label="Help"
                 title="help"
               >
-                ${this.renderCoachHand(
-                  'help'
-                )}
-                ?
+                ${this.renderCoachHand("help")} ?
               </button>
             </div>
           </div>
@@ -2504,28 +1909,12 @@ export class BirthdayRoomPage extends React.Component {
             "
           >
             <span>
-              ${String(
-                this.state
-                  .currentView +
-                  1
-              ).padStart(
-                2,
-                '0'
-              )}
-              /
-              ${String(
-                VIEWS.length
-              ).padStart(
-                2,
-                '0'
-              )}
+              ${String(this.state.currentView + 1).padStart(2, "0")} /
+              ${String(VIEWS.length).padStart(2, "0")}
             </span>
 
             <span>
-              ${isDoor
-                ? 'last stop · open when ready'
-                : view.label
-              }
+              ${isDoor ? "last stop · open when ready" : view.label}
             </span>
           </div>
         </div>
@@ -2541,14 +1930,9 @@ export class BirthdayRoomPage extends React.Component {
             justify-center
           "
           style=${{
-            opacity:
-              this.state
-                .transitioning
-                ? 1
-                : 0,
+            opacity: this.state.transitioning ? 1 : 0,
 
-            transition:
-              'opacity 700ms ease',
+            transition: "opacity 700ms ease",
           }}
         >
           <div
@@ -2566,14 +1950,9 @@ export class BirthdayRoomPage extends React.Component {
             "
             style=${{
               transform:
-                this.state
-                  .transitionPhase >=
-                2
-                  ? 'scale(2.2)'
-                  : 'scale(.6)',
+                this.state.transitionPhase >= 2 ? "scale(2.2)" : "scale(.6)",
 
-              transition:
-                'transform 950ms cubic-bezier(.2,.8,.2,1)',
+              transition: "transform 950ms cubic-bezier(.2,.8,.2,1)",
             }}
           ></div>
 
@@ -2584,15 +1963,9 @@ export class BirthdayRoomPage extends React.Component {
               bg-white
             "
             style=${{
-              opacity:
-                this.state
-                  .transitionPhase >=
-                2
-                  ? 0.94
-                  : 0,
+              opacity: this.state.transitionPhase >= 2 ? 0.94 : 0,
 
-              transition:
-                'opacity 850ms ease',
+              transition: "opacity 850ms ease",
             }}
           ></div>
 
@@ -2607,15 +1980,9 @@ export class BirthdayRoomPage extends React.Component {
               sm:text-3xl
             "
             style=${{
-              opacity:
-                this.state
-                  .transitionPhase >=
-                2
-                  ? 0
-                  : 1,
+              opacity: this.state.transitionPhase >= 2 ? 0 : 1,
 
-              transition:
-                'all 500ms ease',
+              transition: "all 500ms ease",
             }}
           >
             come with me.

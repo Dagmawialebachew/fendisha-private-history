@@ -1,4 +1,5 @@
 import { React, html } from '../lib/react.js';
+import { media } from '../config.js';
 import { SecretHeart } from '../components/SecretHeart.js';
 
 export function BirthdayHeroPage({
@@ -1099,18 +1100,18 @@ export function BirthdayHeroPage({
             "
           >
             <img
-              src="/media/photos/favorite-her.jpg"
+              src=${media.heroCollage}
 
-              alt="Favorite photo of My Fendisha"
+              alt="Four favorite photos of My Fendisha"
 
               className="
-                aspect-[4/5]
+                aspect-square
 
                 w-full
 
                 rounded-[2.5rem]
 
-                object-cover
+                object-contain
 
                 shadow-float
 
@@ -1213,7 +1214,7 @@ export function BirthdayHeroPage({
   teaseText="don't touch this 👀"
 
   className="
-    left-[7%]
+    left-[10%]
     top-[22%]
     z-30
   "

@@ -1062,6 +1062,12 @@ export function FinalePage({
 
     setFinished(true);
 
+    window.dispatchEvent(
+  new CustomEvent(
+    'fendisha:cake-blown'
+  )
+);
+
 
     cancelAnimationFrame(
       rafRef.current

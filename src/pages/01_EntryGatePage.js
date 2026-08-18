@@ -146,7 +146,7 @@ const experienceGuide = [
   {
     icon: '↓',
     title: 'Scroll slowly',
-    text: 'some moments change while u move. no speed-running this 😂',
+    text: 'some moments change while u move. no speed-running this 😂. Each sectoin has buttons to move forward, you can not go the next section by just scrolling.',
   },
   {
     icon: '○',
@@ -1448,7 +1448,7 @@ export class EntryGatePage extends React.Component {
             text-purple-700/55
           "
         >
-          headphones recommended · trust me.
+          headphones recommended · trust me. For now tap anywhere to start the sound.
         </p>
 
       </div>

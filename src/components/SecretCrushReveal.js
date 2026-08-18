@@ -282,7 +282,7 @@ export function SecretCrushReveal({
                     "
                   >
                     A long time ago,
-                    one of my friends
+                    one of my friends(Moh)
                     posted me on his story
                     for my birthday.
                   </p>

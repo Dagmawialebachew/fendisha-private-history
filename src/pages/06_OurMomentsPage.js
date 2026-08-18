@@ -28,7 +28,7 @@ const MOMENTS = [
       'BEFORE IT WAS REALLY “US”',
 
     title:
-      'Frfr Tera Café',
+      'Frfr Tera',
 
     body:
       'At the time it was literally just a café where I properly met u. Nothing cinematic happened. No background music. No dramatic camera angle 😭. It is just funny how a completely normal place can become important before u even know it is becoming important.',

@@ -3,6 +3,10 @@ import {
   html,
 } from '../lib/react.js';
 
+import {
+  useAssetPreloader,
+} from './AssetPreloader.js';
+
 
 /*
 |-----------------------------------------------------------------------------
@@ -68,7 +72,16 @@ const JAZZ_AUDIO_SRC =
   '/audio/prelude/birthday-jazz.m4a';
 
 const JAZZ_VOLUME =
-  0.018;
+  0.09;
+
+const JAZZ_UNDER_SOUNDTRACK_VOLUME =
+  0.004;
+
+const JAZZ_UNDER_VOICE_VOLUME =
+  0.0015;
+
+const JAZZ_FADE_MS =
+  700;
 
 const TICK_VOLUME =
   0.0075;
@@ -380,6 +393,15 @@ export function PreBirthdayGate({
 
 
   /*
+  | Start warming the finished experience immediately — even while the door
+  | is still locked. Photos + artwork + fonts get priority; audio is warmed
+  | only after the visuals have finished.
+  */
+  const preload =
+    useAssetPreloader();
+
+
+  /*
   | Private previews.
   |
   | ?darionPreview=1    -> skip gate, show finished site
@@ -533,6 +555,12 @@ export function PreBirthdayGate({
   ] =
     React.useState(true);
 
+  const [
+    preparingToEnter,
+    setPreparingToEnter,
+  ] =
+    React.useState(false);
+
 
   const gateRef =
     React.useRef(null);
@@ -550,6 +578,15 @@ export function PreBirthdayGate({
 
   const jazzRef =
     React.useRef(null);
+
+  const jazzFadeRafRef =
+    React.useRef(null);
+
+  const soundtrackPlayingRef =
+    React.useRef(false);
+
+  const voiceDepthRef =
+    React.useRef(0);
 
   const lastTickSecondRef =
     React.useRef(null);
@@ -726,7 +763,9 @@ export function PreBirthdayGate({
           nowAt + 0.045
         );
       },
-      [soundEnabled]
+      [
+        soundEnabled,
+      ]
     );
 
 
@@ -764,12 +803,127 @@ export function PreBirthdayGate({
   ]);
 
 
+  const getJazzTargetVolume =
+    React.useCallback(
+      () => {
+        if (voiceDepthRef.current > 0) {
+          return JAZZ_UNDER_VOICE_VOLUME;
+        }
+
+        if (soundtrackPlayingRef.current) {
+          return JAZZ_UNDER_SOUNDTRACK_VOLUME;
+        }
+
+        return JAZZ_VOLUME;
+      },
+      []
+    );
+
+
+  const fadeJazzTo =
+    React.useCallback(
+      (target, duration = JAZZ_FADE_MS) => {
+        const jazz =
+          jazzRef.current;
+
+        if (!jazz) {
+          return;
+        }
+
+        if (jazzFadeRafRef.current) {
+          cancelAnimationFrame(
+            jazzFadeRafRef.current
+          );
+
+          jazzFadeRafRef.current =
+            null;
+        }
+
+        const from =
+          jazz.volume;
+
+        const to =
+          clamp(
+            target,
+            0,
+            1
+          );
+
+        const startedAt =
+          performance.now();
+
+        const step =
+          timestamp => {
+            const raw =
+              clamp(
+                (timestamp - startedAt) /
+                  Math.max(1, duration),
+                0,
+                1
+              );
+
+            const eased =
+              raw * raw *
+              (3 - 2 * raw);
+
+            jazz.volume =
+              from +
+              (to - from) * eased;
+
+            if (raw < 1) {
+              jazzFadeRafRef.current =
+                requestAnimationFrame(
+                  step
+                );
+
+              return;
+            }
+
+            jazz.volume =
+              to;
+
+            jazzFadeRafRef.current =
+              null;
+          };
+
+        jazzFadeRafRef.current =
+          requestAnimationFrame(
+            step
+          );
+      },
+      []
+    );
+
+
+  const syncJazzBed =
+    React.useCallback(
+      (duration = JAZZ_FADE_MS) => {
+        fadeJazzTo(
+          getJazzTargetVolume(),
+          duration
+        );
+      },
+      [
+        fadeJazzTo,
+        getJazzTargetVolume,
+      ]
+    );
+
+
   const startAtmosphere =
     React.useCallback(
       async () => {
+        if (soundStartingRef.current) {
+          return;
+        }
+
+        // If jazz is already genuinely playing, there is nothing to unlock.
+        // If soundEnabled is true but playback is paused/blocked, allow the
+        // next real user gesture to retry it.
         if (
-          soundEnabled ||
-          soundStartingRef.current
+          soundEnabled &&
+          jazzRef.current &&
+          !jazzRef.current.paused
         ) {
           return;
         }
@@ -810,7 +964,7 @@ export function PreBirthdayGate({
               true;
 
             jazz.volume =
-              JAZZ_VOLUME;
+              getJazzTargetVolume();
 
             jazz.addEventListener(
               'error',
@@ -828,11 +982,20 @@ export function PreBirthdayGate({
 
           try {
             jazzRef.current.volume =
-              JAZZ_VOLUME;
+              getJazzTargetVolume();
 
             await jazzRef.current.play();
-          } catch {
-            // Tick layer can still work if the jazz file is missing/blocked.
+
+            setJazzAvailable(
+              true
+            );
+          } catch (error) {
+            // Do not permanently lock ourselves out after one blocked play.
+            // A later click/tap/keypress will retry startAtmosphere().
+            console.warn(
+              '[Fendisha jazz] playback did not start yet:',
+              error
+            );
           }
 
           setSoundEnabled(
@@ -847,59 +1010,60 @@ export function PreBirthdayGate({
     );
 
 
-  const fadePreludeAudio =
-    React.useCallback(
-      (duration = 800) => {
-        const jazz =
-          jazzRef.current;
+  /*
+  | Browser autoplay rules require a genuine user gesture. The old version
+  | attached that gesture only to the visible pre-birthday gate. That meant
+  | ?darionPreview=1 or a refresh after ENTERED_KEY was saved could render
+  | the finished experience directly and never unlock jazz at all.
+  |
+  | Listen globally until playback has been unlocked so the FIRST click/tap
+  | anywhere in either the gate OR the finished experience can start jazz.
+  */
+  React.useEffect(() => {
+    const unlockFromGesture =
+      () => {
+        startAtmosphere();
+      };
 
-        if (!jazz) {
-          return;
-        }
-
-        const startVolume =
-          jazz.volume;
-
-        const startedAt =
-          performance.now();
-
-        const step =
-          timestamp => {
-            const t =
-              clamp(
-                (timestamp - startedAt) /
-                  duration,
-                0,
-                1
-              );
-
-            jazz.volume =
-              Math.max(
-                0,
-                startVolume *
-                  (1 - t)
-              );
-
-            if (t < 1) {
-              requestAnimationFrame(
-                step
-              );
-              return;
-            }
-
-            jazz.pause();
-          };
-
-        requestAnimationFrame(
-          step
-        );
-      },
-      []
+    document.addEventListener(
+      'pointerdown',
+      unlockFromGesture,
+      true
     );
+
+    document.addEventListener(
+      'keydown',
+      unlockFromGesture,
+      true
+    );
+
+    return () => {
+      document.removeEventListener(
+        'pointerdown',
+        unlockFromGesture,
+        true
+      );
+
+      document.removeEventListener(
+        'keydown',
+        unlockFromGesture,
+        true
+      );
+    };
+  }, [startAtmosphere]);
 
 
   React.useEffect(() => {
     return () => {
+      if (jazzFadeRafRef.current) {
+        cancelAnimationFrame(
+          jazzFadeRafRef.current
+        );
+
+        jazzFadeRafRef.current =
+          null;
+      }
+
       try {
         jazzRef.current?.pause();
       } catch {}
@@ -914,21 +1078,26 @@ export function PreBirthdayGate({
   React.useEffect(() => {
     const onVisibility =
       () => {
-       
-
         if (
-          soundEnabled &&
-          jazzRef.current &&
-          !visualReleased
+          document.visibilityState !==
+            'visible' ||
+          !soundEnabled ||
+          !jazzRef.current
         ) {
-          jazzRef.current.volume =
-            JAZZ_VOLUME;
-
-          jazzRef.current.play()
-            .catch(
-              () => {}
-            );
+          return;
         }
+
+        jazzRef.current.play()
+          .then(
+            () => {
+              syncJazzBed(
+                280
+              );
+            }
+          )
+          .catch(
+            () => {}
+          );
       };
 
     document.addEventListener(
@@ -943,7 +1112,77 @@ export function PreBirthdayGate({
       );
   }, [
     soundEnabled,
-    visualReleased,
+    syncJazzBed,
+  ]);
+
+
+  React.useEffect(() => {
+    const onSoundtrackState =
+      event => {
+        soundtrackPlayingRef.current =
+          event?.detail?.playing ===
+          true;
+
+        syncJazzBed();
+      };
+
+    const onVoiceStart =
+      () => {
+        voiceDepthRef.current +=
+          1;
+
+        syncJazzBed(
+          420
+        );
+      };
+
+    const onVoiceEnd =
+      () => {
+        voiceDepthRef.current =
+          Math.max(
+            0,
+            voiceDepthRef.current -
+              1
+          );
+
+        syncJazzBed(
+          700
+        );
+      };
+
+    window.addEventListener(
+      'fendisha:soundtrack-state',
+      onSoundtrackState
+    );
+
+    window.addEventListener(
+      'fendisha:voice-start',
+      onVoiceStart
+    );
+
+    window.addEventListener(
+      'fendisha:voice-end',
+      onVoiceEnd
+    );
+
+    return () => {
+      window.removeEventListener(
+        'fendisha:soundtrack-state',
+        onSoundtrackState
+      );
+
+      window.removeEventListener(
+        'fendisha:voice-start',
+        onVoiceStart
+      );
+
+      window.removeEventListener(
+        'fendisha:voice-end',
+        onVoiceEnd
+      );
+    };
+  }, [
+    syncJazzBed,
   ]);
 
 
@@ -1000,7 +1239,7 @@ export function PreBirthdayGate({
           'ready'
         );
       },
-      [fadePreludeAudio]
+      []
     );
 
 
@@ -1247,12 +1486,30 @@ export function PreBirthdayGate({
 
 
   const enterExperience =
-    () => {
+    async () => {
       if (
         !released &&
         !releasedPreview
       ) {
         return;
+      }
+
+      if (preparingToEnter) {
+        return;
+      }
+
+      /*
+      | Never let Page 1 open while future photographs are still arriving.
+      | In the normal case this resolves instantly because the locked prelude
+      | has already spent minutes/hours warming the browser cache.
+      */
+      if (!preload.visualReady) {
+        setPreparingToEnter(
+          true
+        );
+
+        await preload
+          .waitForVisuals();
       }
 
       if (!releasedPreview) {
@@ -1262,7 +1519,8 @@ export function PreBirthdayGate({
         );
       }
 
-      fadePreludeAudio(
+      // Keep the jazz bed alive across the hand-off into the experience.
+      syncJazzBed(
         500
       );
 
@@ -2215,7 +2473,11 @@ export function PreBirthdayGate({
                                 text-purple-400
                               "
                             >
-                              ONE THING BEFORE THE DOOR
+                              ${
+                                preparingToEnter
+                                  ? 'ONE MOMENT, MY LADY'
+                                  : 'ONE THING BEFORE THE DOOR'
+                              }
                             </p>
 
                             <p
@@ -2226,8 +2488,11 @@ export function PreBirthdayGate({
                                 text-purple-900/66
                               "
                             >
-                              whatever u think this is right now — keep the guess.
-                              I would rather let the first page answer badly than explain it well.
+                              ${
+                                preparingToEnter
+                                  ? 'A lady should never be made to witness unfinished preparations. The photographs are being put in their proper places.'
+                                  : 'whatever u think this is right now — keep the guess. I would rather let the first page answer badly than explain it well.'
+                              }
                             </p>
 
                             <p
@@ -2239,7 +2504,17 @@ export function PreBirthdayGate({
                                 text-purple-700
                               "
                             >
-                              everything has a reason. even the stupid little things.
+                              ${
+                                preparingToEnter
+                                  ? preload.visualPercent >= 90
+                                    ? 'one final inspection…'
+                                    : preload.visualPercent >= 70
+                                      ? 'hiding twenty-one little things…'
+                                      : preload.visualPercent >= 45
+                                        ? 'arranging the photographs…'
+                                        : 'drawing the curtains…'
+                                  : 'everything has a reason. even the stupid little things.'
+                              }
                             </p>
                           </div>
 
@@ -2249,6 +2524,10 @@ export function PreBirthdayGate({
 
                             onClick=${
                               enterExperience
+                            }
+
+                            disabled=${
+                              preparingToEnter
                             }
 
                             className="
@@ -2282,7 +2561,11 @@ export function PreBirthdayGate({
                             }}
                           >
                             <span>
-                              open the door
+                              ${
+                                preparingToEnter
+                                  ? `preparing the house · ${preload.visualPercent}%`
+                                  : 'open the door'
+                              }
                             </span>
 
                             <span
@@ -2292,7 +2575,11 @@ export function PreBirthdayGate({
                                 group-hover:translate-x-1
                               "
                             >
-                              →
+                              ${
+                                preparingToEnter
+                                  ? '…'
+                                  : '→'
+                              }
                             </span>
                           </button>
 
@@ -2306,7 +2593,11 @@ export function PreBirthdayGate({
                               text-purple-500/56
                             "
                           >
-                            for My Fendisha 🍿 · nobody else
+                            ${
+                              preparingToEnter
+                                ? `${preload.visualDone} / ${preload.visualTotal} visual preparations checked`
+                                : 'for My Fendisha 🍿 · nobody else'
+                            }
                           </p>
 
                         `

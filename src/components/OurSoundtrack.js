@@ -12,6 +12,27 @@ const SPOTIFY_API_SCRIPT =
   'https://open.spotify.com/embed/iframe-api/v1';
 
 
+function emitSoundtrackState(
+  playing
+) {
+  try {
+    window.dispatchEvent(
+      new CustomEvent(
+        'fendisha:soundtrack-state',
+        {
+          detail: {
+            playing:
+              Boolean(playing),
+          },
+        }
+      )
+    );
+  } catch {
+    // Background ambience must never break Spotify controls.
+  }
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | SPOTIFY URL
@@ -479,6 +500,10 @@ export function OurSoundtrack({
                           data.isPaused
                         );
 
+                        emitSoundtrackState(
+                          !data.isPaused
+                        );
+
 
                         if (
                           !data.isPaused
@@ -505,6 +530,10 @@ export function OurSoundtrack({
                       );
 
                       setStarted(
+                        true
+                      );
+
+                      emitSoundtrackState(
                         true
                       );
                     }
@@ -553,6 +582,10 @@ export function OurSoundtrack({
   React.useEffect(
     () => {
       return () => {
+        emitSoundtrackState(
+          false
+        );
+
         try {
           controllerRef
             .current
